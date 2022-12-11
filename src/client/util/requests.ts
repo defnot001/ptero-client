@@ -1,6 +1,6 @@
-import type { PteroHeaders, RequestURLOptions } from '../types/interfaces';
+import type { Headers, RequestURLOptions } from '../types/interfaces';
 
-export const getRequestHeaders = (apiKey: string): PteroHeaders => {
+export const getRequestHeaders = (apiKey: string): Headers => {
   return {
     headers: {
       Authorization: `Bearer ${apiKey}`,

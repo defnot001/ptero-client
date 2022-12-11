@@ -10,7 +10,7 @@ export interface RequestURLOptions {
   backupID?: string;
 }
 
-export interface PteroHeaders {
+export interface Headers {
   headers: {
     Authorization: string;
     'Content-Type': string;
@@ -18,7 +18,7 @@ export interface PteroHeaders {
   };
 }
 
-interface PteroBackupListAttributes {
+interface BackupListAttributes {
   uuid: string;
   name: string;
   ignored_files: string[];
@@ -28,7 +28,7 @@ interface PteroBackupListAttributes {
   completed_at: string;
 }
 
-interface PteroBackupMeta {
+interface BackupMeta {
   backup_count: number;
   pagination: {
     total: number;
@@ -40,18 +40,18 @@ interface PteroBackupMeta {
   };
 }
 
-interface PteroBackup {
+interface Backup {
   object: 'backup';
-  attributes: PteroBackupListAttributes;
+  attributes: BackupListAttributes;
 }
 
-export interface PteroBackupListResponseData {
+export interface BackupListResponseData {
   object: 'list';
-  data: PteroBackup[];
-  meta: PteroBackupMeta;
+  data: Backup[];
+  meta: BackupMeta;
 }
 
-interface PteroBackupCreateAttributes {
+interface BackupCreateAttributes {
   uuid: string;
   is_successful: boolean;
   is_locked: boolean;
@@ -63,13 +63,28 @@ interface PteroBackupCreateAttributes {
   completed_at: string;
 }
 
-export interface PteroBackupCreateResponseData {
+export interface BackupCreateResponseData {
   object: 'backup';
-  attributes: PteroBackupCreateAttributes;
+  attributes: BackupCreateAttributes;
 }
 
-export interface PteroAPIError {
+export interface APIError {
   code: string;
   status: string;
   detail: string;
+}
+
+interface AccountDetailsAttributes {
+  id: number;
+  admin: boolean;
+  username: string;
+  email: string;
+  first_name: string;
+  last_name: string;
+  language: string;
+}
+
+export interface PteroAccountDetailsResponseData {
+  object: 'user';
+  attributes: AccountDetailsAttributes;
 }

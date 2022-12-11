@@ -1,11 +1,11 @@
-import type { PteroAPIError } from '../types/interfaces';
+import type { APIError } from '../types/interfaces';
 
 export class PterodactylError extends Error {
   public readonly code: string;
   public readonly status: string;
   public readonly detail: string;
 
-  public constructor(error: PteroAPIError) {
+  public constructor(error: APIError) {
     const { code, status, detail } = error;
     super(detail);
 

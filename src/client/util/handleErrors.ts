@@ -1,7 +1,7 @@
 import axios, { AxiosError } from 'axios';
-import type { PteroAPIError } from '../types/interfaces';
+import type { APIError } from '../types/interfaces';
 
-const getAPIErrors = (err: AxiosError): PteroAPIError[] | undefined => {
+const getAPIErrors = (err: AxiosError): APIError[] | undefined => {
   if (
     typeof err === 'object' &&
     err !== undefined &&
@@ -15,13 +15,13 @@ const getAPIErrors = (err: AxiosError): PteroAPIError[] | undefined => {
     Array.isArray(err.response.data.errors) &&
     err.response.data.errors.every((error) => isPteroAPIError(error))
   ) {
-    return err.response.data.errors as PteroAPIError[];
+    return err.response.data.errors as APIError[];
   }
 
   return;
 };
 
-export const isPteroAPIError = (err: unknown): err is PteroAPIError => {
+export const isPteroAPIError = (err: unknown): err is APIError => {
   return (
     typeof err === 'object' &&
     err !== null &&
