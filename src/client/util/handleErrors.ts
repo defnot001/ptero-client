@@ -31,7 +31,7 @@ export const isPteroAPIError = (err: unknown): err is PteroAPIError => {
   );
 };
 
-export const getError = (error: unknown): PteroAPIError | undefined => {
+export const getError = (error: unknown) => {
   if (!axios.isAxiosError(error)) return;
 
   const apiErrors = getAPIErrors(error);
