@@ -1,11 +1,12 @@
 import type {
-  PteroBackupCreateResponseData,
-  PteroBackupListResponseData,
+  AccountDetailsResponseData,
+  BackupCreateResponseData,
+  BackupListResponseData,
 } from '../types/interfaces';
 
-export function assertsPteroBackupCreateResponseData(
+export function assertsBackupCreateResponseData(
   data: unknown,
-): asserts data is PteroBackupCreateResponseData {
+): asserts data is BackupCreateResponseData {
   if (
     typeof data === 'object' &&
     data !== null &&
@@ -18,14 +19,32 @@ export function assertsPteroBackupCreateResponseData(
   throw new Error();
 }
 
-export function assertsPteroBackupListResponseData(
+export function assertsBackupListResponseData(
   data: unknown,
-): asserts data is PteroBackupListResponseData {
+): asserts data is BackupListResponseData {
   if (
     typeof data === 'object' &&
     data !== null &&
     'object' in data &&
     data.object === 'list'
+  ) {
+    return;
+  }
+
+  throw new Error();
+}
+
+export function assertsAccountDetailsResponseData(
+  data: unknown,
+): asserts data is AccountDetailsResponseData {
+  if (
+    typeof data === 'object' &&
+    data !== null &&
+    'object' in data &&
+    data.object === 'user' &&
+    'attributes' in data &&
+    typeof data.attributes === 'object' &&
+    data.attributes !== null
   ) {
     return;
   }

@@ -84,7 +84,12 @@ interface AccountDetailsAttributes {
   language: string;
 }
 
-export interface PteroAccountDetailsResponseData {
+export interface AccountDetailsResponseData {
   object: 'user';
   attributes: AccountDetailsAttributes;
+}
+
+export interface BackupOptions {
+  backupName?: string;
+  locked?: boolean;
 }
