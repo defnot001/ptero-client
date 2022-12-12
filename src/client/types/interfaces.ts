@@ -40,14 +40,14 @@ interface BackupMeta {
   };
 }
 
-interface Backup {
+interface PterodactylBackup {
   object: 'backup';
   attributes: BackupListAttributes;
 }
 
 export interface BackupListResponseData {
   object: 'list';
-  data: Backup[];
+  data: PterodactylBackup[];
   meta: BackupMeta;
 }
 
@@ -93,3 +93,84 @@ export interface BackupOptions {
   backupName?: string;
   locked?: boolean;
 }
+
+interface ServerAttributeLimits {
+  memory: number;
+  swap: number;
+  disk: number;
+  io: number;
+  cpu: number;
+  threads: number;
+  oom_disabled: boolean;
+}
+
+interface ServerAttributeFeatureLimits {
+  databases: number;
+  allocations: number;
+  backups: number;
+}
+
+interface ServerAttributeRelationshipsAllocationsData {
+  object: 'allocation';
+  attributes: {
+    id: number;
+    ip: string;
+    ip_alias: string;
+    port: number;
+    notes: string;
+    is_default: boolean;
+  };
+}
+
+interface ServerAttributeRelationships {
+  allocations: {
+    object: 'list';
+    data: ServerAttributeRelationshipsAllocationsData[];
+  };
+  variables: {
+    object: Record<string, unknown>;
+  };
+}
+
+interface ServerAttributes {
+  server_owner: boolean;
+  identifier: string;
+  internal_id: number;
+  uuid: string;
+  name: string;
+  node: string;
+  sftp_details: { ip: string; port: number };
+  description: string;
+  limits: ServerAttributeLimits;
+  invocation: string;
+  docker_image: string;
+  egg_features: string[];
+  feature_limits: ServerAttributeFeatureLimits;
+  status: number;
+  is_suspended: boolean;
+  is_installing: boolean;
+  is_transferring: boolean;
+  relationships: ServerAttributeRelationships;
+}
+
+interface PterodactylServer {
+  object: 'server';
+  attributes: ServerAttributes;
+}
+
+export interface ListServersResponseData {
+  object: 'list';
+  data: PterodactylServer[];
+  meta: {
+    pagination: {
+      total: number;
+      count: number;
+      per_page: number;
+      current_page: number;
+      total_pages: number;
+      links: Record<string, unknown>;
+    };
+  };
+}
+/*
+ */

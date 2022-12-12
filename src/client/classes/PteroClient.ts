@@ -5,11 +5,13 @@ import type {
   BackupCreateResponseData,
   BackupListResponseData,
   BackupOptions,
+  ListServersResponseData,
 } from '../types/interfaces';
 import {
   assertsAccountDetailsResponseData,
   assertsBackupCreateResponseData,
   assertsBackupListResponseData,
+  assertsListServersResponseData,
 } from '../util/assertions';
 import { ClientEndpoints } from '../util/clientEndpoints';
 import { getError } from '../util/handleErrors';
@@ -78,6 +80,30 @@ export default class PteroClient {
    */
   public isPterodactylError(error: unknown): error is PterodactylError {
     return error instanceof PterodactylError;
+  }
+
+  /**
+   * Lists all servers the client has access to.
+   * @async @public @method listServers
+   * @returns {Promise<ListServersResponseData>} The list of servers.
+   * @throws {Error} If the request failed.
+   */
+  public async listServers(): Promise<ListServersResponseData> {
+    try {
+      const { data } = await axios.get(
+        getRequestURL({
+          hostURL: this.baseURL,
+          endpoint: ClientEndpoints.listServers,
+        }),
+        getRequestHeaders(this.apiKey),
+      );
+
+      assertsListServersResponseData(data);
+
+      return data;
+    } catch (err) {
+      throw new Error('Failed to list servers!');
+    }
   }
 
   /**

@@ -2,6 +2,7 @@ import type {
   AccountDetailsResponseData,
   BackupCreateResponseData,
   BackupListResponseData,
+  ListServersResponseData,
 } from '../types/interfaces';
 
 export function assertsBackupCreateResponseData(
@@ -45,6 +46,30 @@ export function assertsAccountDetailsResponseData(
     'attributes' in data &&
     typeof data.attributes === 'object' &&
     data.attributes !== null
+  ) {
+    return;
+  }
+
+  throw new Error();
+}
+
+export function assertsListServersResponseData(
+  data: unknown,
+): asserts data is ListServersResponseData {
+  if (
+    typeof data === 'object' &&
+    data !== null &&
+    'object' in data &&
+    data.object === 'list' &&
+    'data' in data &&
+    Array.isArray(data.data) &&
+    data.data.every(
+      (server) =>
+        typeof server === 'object' &&
+        server !== null &&
+        'object' in server &&
+        server.object === 'server',
+    )
   ) {
     return;
   }

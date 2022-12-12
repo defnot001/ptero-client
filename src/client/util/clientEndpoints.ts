@@ -1,5 +1,6 @@
 export const enum ClientEndpoints {
   getAccountDetails = `api/client/account`,
+  listServers = `api/client`,
   changePowerState = `api/client/servers/:server_id/power`,
   listBackups = `api/client/servers/:server_id/backups`,
   createBackup = `api/client/servers/:server_id/backups`,
