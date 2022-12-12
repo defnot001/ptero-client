@@ -1,13 +1,14 @@
 import type {
-  AccountDetailsResponseData,
-  BackupCreateResponseData,
-  BackupListResponseData,
-  ListServersResponseData,
+  AccountDetailsResponse,
+  BackupCreateResponse,
+  BackupListResponse,
+  ListFilesResponse,
+  ListServersResponse,
 } from '../types/interfaces';
 
-export function assertsBackupCreateResponseData(
+export function assertsBackupCreateResponse(
   data: unknown,
-): asserts data is BackupCreateResponseData {
+): asserts data is BackupCreateResponse {
   if (
     typeof data === 'object' &&
     data !== null &&
@@ -20,9 +21,9 @@ export function assertsBackupCreateResponseData(
   throw new Error();
 }
 
-export function assertsBackupListResponseData(
+export function assertsBackupListResponse(
   data: unknown,
-): asserts data is BackupListResponseData {
+): asserts data is BackupListResponse {
   if (
     typeof data === 'object' &&
     data !== null &&
@@ -35,9 +36,9 @@ export function assertsBackupListResponseData(
   throw new Error();
 }
 
-export function assertsAccountDetailsResponseData(
+export function assertsAccountDetailsResponse(
   data: unknown,
-): asserts data is AccountDetailsResponseData {
+): asserts data is AccountDetailsResponse {
   if (
     typeof data === 'object' &&
     data !== null &&
@@ -53,9 +54,9 @@ export function assertsAccountDetailsResponseData(
   throw new Error();
 }
 
-export function assertsListServersResponseData(
+export function assertsListServersResponse(
   data: unknown,
-): asserts data is ListServersResponseData {
+): asserts data is ListServersResponse {
   if (
     typeof data === 'object' &&
     data !== null &&
@@ -69,6 +70,30 @@ export function assertsListServersResponseData(
         server !== null &&
         'object' in server &&
         server.object === 'server',
+    )
+  ) {
+    return;
+  }
+
+  throw new Error();
+}
+
+export function assertsListFilesResponse(
+  data: unknown,
+): asserts data is ListFilesResponse {
+  if (
+    typeof data === 'object' &&
+    data !== null &&
+    'object' in data &&
+    data.object === 'list' &&
+    'data' in data &&
+    Array.isArray(data.data) &&
+    data.data.every(
+      (file) =>
+        typeof file === 'object' &&
+        file !== null &&
+        'object' in file &&
+        file.object === 'file_object',
     )
   ) {
     return;

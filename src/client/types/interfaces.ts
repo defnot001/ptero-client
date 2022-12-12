@@ -8,6 +8,7 @@ export interface RequestURLOptions {
   endpoint: string;
   serverID?: string;
   backupID?: string;
+  directory?: string;
 }
 
 export interface Headers {
@@ -45,7 +46,7 @@ interface PterodactylBackup {
   attributes: BackupListAttributes;
 }
 
-export interface BackupListResponseData {
+export interface BackupListResponse {
   object: 'list';
   data: PterodactylBackup[];
   meta: BackupMeta;
@@ -63,7 +64,7 @@ interface BackupCreateAttributes {
   completed_at: string;
 }
 
-export interface BackupCreateResponseData {
+export interface BackupCreateResponse {
   object: 'backup';
   attributes: BackupCreateAttributes;
 }
@@ -84,7 +85,7 @@ interface AccountDetailsAttributes {
   language: string;
 }
 
-export interface AccountDetailsResponseData {
+export interface AccountDetailsResponse {
   object: 'user';
   attributes: AccountDetailsAttributes;
 }
@@ -110,7 +111,7 @@ interface ServerAttributeFeatureLimits {
   backups: number;
 }
 
-interface ServerAttributeRelationshipsAllocationsData {
+interface ServerAttributeRelationshipsAllocations {
   object: 'allocation';
   attributes: {
     id: number;
@@ -125,7 +126,7 @@ interface ServerAttributeRelationshipsAllocationsData {
 interface ServerAttributeRelationships {
   allocations: {
     object: 'list';
-    data: ServerAttributeRelationshipsAllocationsData[];
+    data: ServerAttributeRelationshipsAllocations[];
   };
   variables: {
     object: Record<string, unknown>;
@@ -158,7 +159,7 @@ interface PterodactylServer {
   attributes: ServerAttributes;
 }
 
-export interface ListServersResponseData {
+export interface ListServersResponse {
   object: 'list';
   data: PterodactylServer[];
   meta: {
@@ -171,6 +172,25 @@ export interface ListServersResponseData {
       links: Record<string, unknown>;
     };
   };
+}
+
+interface PterodactylFile {
+  object: 'file_object';
+  attributes: {
+    name: string;
+    mode: string;
+    mode_bits: string;
+    size: number;
+    is_file: boolean;
+    is_symlink: boolean;
+    mimetype: string;
+    created_at: string;
+    modified_at: string;
+  };
+}
+export interface ListFilesResponse {
+  object: 'list';
+  data: PterodactylFile[];
 }
 /*
  */

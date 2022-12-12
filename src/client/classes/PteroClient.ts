@@ -1,17 +1,18 @@
 import axios from 'axios';
 import type {
-  AccountDetailsResponseData,
+  AccountDetailsResponse,
   AuthDetails,
-  BackupCreateResponseData,
-  BackupListResponseData,
+  BackupCreateResponse,
+  BackupListResponse,
   BackupOptions,
-  ListServersResponseData,
+  ListServersResponse,
 } from '../types/interfaces';
 import {
-  assertsAccountDetailsResponseData,
-  assertsBackupCreateResponseData,
-  assertsBackupListResponseData,
-  assertsListServersResponseData,
+  assertsAccountDetailsResponse,
+  assertsBackupCreateResponse,
+  assertsBackupListResponse,
+  assertsListFilesResponse,
+  assertsListServersResponse,
 } from '../util/assertions';
 import { ClientEndpoints } from '../util/clientEndpoints';
 import { getError } from '../util/handleErrors';
@@ -85,10 +86,10 @@ export default class PteroClient {
   /**
    * Lists all servers the client has access to.
    * @async @public @method listServers
-   * @returns {Promise<ListServersResponseData>} The list of servers.
+   * @returns {Promise<ListServersResponse>} The list of servers.
    * @throws {Error} If the request failed.
    */
-  public async listServers(): Promise<ListServersResponseData> {
+  public async listServers(): Promise<ListServersResponse> {
     try {
       const { data } = await axios.get(
         getRequestURL({
@@ -98,7 +99,7 @@ export default class PteroClient {
         getRequestHeaders(this.apiKey),
       );
 
-      assertsListServersResponseData(data);
+      assertsListServersResponse(data);
 
       return data;
     } catch (err) {
@@ -106,13 +107,40 @@ export default class PteroClient {
     }
   }
 
+  public async listFiles(serverID: string, directory = '/') {
+    directory = encodeURIComponent(directory);
+
+    try {
+      const { data } = await axios.get(
+        getRequestURL({
+          hostURL: this.baseURL,
+          endpoint: ClientEndpoints.listFiles,
+          serverID: serverID,
+        }) + directory,
+        getRequestHeaders(this.apiKey),
+      );
+
+      assertsListFilesResponse(data);
+
+      return data;
+    } catch (err) {
+      const error = getError(err);
+
+      if (!error) {
+        throw new Error(`Failed to create backup of server ${serverID}!`);
+      }
+
+      throw new PterodactylError(error);
+    }
+  }
+
   /**
    * Gets the account details of the user.
    * @async @public @method getAccountDetails
-   * @returns {Promise<AccountDetailsResponseData>} The account details.
+   * @returns {Promise<AccountDetailsResponse>} The account details.
    * @throws {Error} If the request failed.
    */
-  public async getAccountDetails(): Promise<AccountDetailsResponseData> {
+  public async getAccountDetails(): Promise<AccountDetailsResponse> {
     try {
       const { data } = await axios.get(
         getRequestURL({
@@ -122,7 +150,7 @@ export default class PteroClient {
         getRequestHeaders(this.apiKey),
       );
 
-      assertsAccountDetailsResponseData(data);
+      assertsAccountDetailsResponse(data);
 
       return data;
     } catch (err) {
@@ -178,10 +206,10 @@ export default class PteroClient {
    * Lists the Backups of a server.
    * @async @public @method listBackups
    * @param  {string} serverID The ID of the server.
-   * @returns {Promise<BackupListResponseData>} The backups.
+   * @returns {Promise<BackupListResponse>} The backups.
    * @throws {Error} If the request failed.
    */
-  public async listBackups(serverID: string): Promise<BackupListResponseData> {
+  public async listBackups(serverID: string): Promise<BackupListResponse> {
     try {
       const { data } = await axios.get(
         getRequestURL({
@@ -192,7 +220,7 @@ export default class PteroClient {
         getRequestHeaders(this.apiKey),
       );
 
-      assertsBackupListResponseData(data);
+      assertsBackupListResponse(data);
 
       return data;
     } catch (err) {
@@ -205,14 +233,14 @@ export default class PteroClient {
    * @async @public @method createBackup
    * @param  {string} serverID The ID of the server.
    * @param  {BackupOptions} [options] The options for the backup.
-   * @returns {Promise<BackupCreateResponseData>} The backup.
+   * @returns {Promise<BackupCreateResponse>} The backup.
    * @throws {Error} If the request failed.
    * @throws {PterodactylError} If the request failed because of a Pterodactyl error.
    */
   public async createBackup(
     serverID: string,
     options?: BackupOptions,
-  ): Promise<BackupCreateResponseData> {
+  ): Promise<BackupCreateResponse> {
     try {
       const backupName =
         options?.backupName || `Backup at ${new Date()} with ptero-client.`;
@@ -229,7 +257,7 @@ export default class PteroClient {
         getRequestHeaders(this.apiKey),
       );
 
-      assertsBackupCreateResponseData(data);
+      assertsBackupCreateResponse(data);
 
       return data;
     } catch (err) {
