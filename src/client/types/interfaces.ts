@@ -58,21 +58,6 @@ export interface APIError {
   detail: string;
 }
 
-interface AccountDetailsAttributes {
-  id: number;
-  admin: boolean;
-  username: string;
-  email: string;
-  first_name: string;
-  last_name: string;
-  language: string;
-}
-
-export interface AccountDetailsResponse {
-  object: 'user';
-  attributes: AccountDetailsAttributes;
-}
-
 export interface BackupOptions {
   backupName?: string;
   locked?: boolean;

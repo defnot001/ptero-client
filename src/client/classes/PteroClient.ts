@@ -1,6 +1,5 @@
 import axios from 'axios';
 import type {
-  AccountDetailsResponse,
   AuthDetails,
   BackupListResponse,
   BackupOptions,
@@ -8,12 +7,13 @@ import type {
 import { ClientEndpoints } from '../util/clientEndpoints';
 import { handleError } from '../util/handleErrors';
 import { getRequestHeaders, getRequestURL } from '../util/requests';
+import { AccountDetailsResponseSchema } from '../validation/AccountSchema';
 import {
   BackupCreateResponse,
   BackupCreateResponseSchema,
 } from '../validation/BackupSchema';
 import { ListFilesResponseSchema } from '../validation/FileSchema';
-import { listServersResponseSchema } from '../validation/listServersSchema';
+import { listServersResponseSchema } from '../validation/ServerSchema';
 import { PterodactylError } from './PterodactylError';
 import { ValidationError } from './ValidationError';
 
@@ -158,9 +158,11 @@ export default class PteroClient {
    * Gets the account details of the user.
    * @async @public @method getAccountDetails
    * @returns {Promise<AccountDetailsResponse>} The account details.
+   * @throws {APIValidationError} If the response is different than expected.
+   * @throws {PterodactylError} If the request failed due to an error on the server.
    * @throws {Error} If the request failed.
    */
-  public async getAccountDetails(): Promise<AccountDetailsResponse> {
+  public async getAccountDetails() {
     try {
       const { data } = await axios.get(
         getRequestURL({
@@ -170,9 +172,13 @@ export default class PteroClient {
         getRequestHeaders(this.apiKey),
       );
 
-      return data;
+      const validated = AccountDetailsResponseSchema.safeParse(data);
+
+      if (!validated.success) throw new ValidationError();
+
+      return validated.data;
     } catch (err) {
-      throw new Error('Failed to get account details!');
+      return handleError(err, 'Failed to get the account details!');
     }
   }
 
