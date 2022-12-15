@@ -1,9 +1,5 @@
 import axios from 'axios';
-import type {
-  AuthDetails,
-  BackupListResponse,
-  BackupOptions,
-} from '../types/interfaces';
+import type { AuthDetails, BackupOptions } from '../types/interfaces';
 import { ClientEndpoints } from '../util/clientEndpoints';
 import { handleError } from '../util/handleErrors';
 import { getRequestHeaders, getRequestURL } from '../util/requests';
@@ -11,6 +7,7 @@ import { AccountDetailsResponseSchema } from '../validation/AccountSchema';
 import {
   BackupCreateResponse,
   BackupCreateResponseSchema,
+  BackupListResponseSchema,
 } from '../validation/BackupSchema';
 import { ListFilesResponseSchema } from '../validation/FileSchema';
 import { listServersResponseSchema } from '../validation/ServerSchema';
@@ -189,7 +186,7 @@ export default class PteroClient {
    * @returns {Promise<void>}
    * @throws {Error} If the request failed.
    */
-  public async startServer(serverID: string): Promise<void> {
+  public async startServer(serverID: string) {
     this.requestChangePowerstate(serverID, 'start');
   }
 
@@ -200,7 +197,7 @@ export default class PteroClient {
    * @returns {Promise<void>}
    * @throws {Error} If the request failed.
    */
-  public async stopServer(serverID: string): Promise<void> {
+  public async stopServer(serverID: string) {
     this.requestChangePowerstate(serverID, 'stop');
   }
 
@@ -211,7 +208,7 @@ export default class PteroClient {
    * @returns {Promise<void>}
    * @throws {Error} If the request failed.
    */
-  public async restartServer(serverID: string): Promise<void> {
+  public async restartServer(serverID: string) {
     this.requestChangePowerstate(serverID, 'restart');
   }
 
@@ -222,7 +219,7 @@ export default class PteroClient {
    * @returns {Promise<void>}
    * @throws {Error} If the request failed.
    */
-  public async killServer(serverID: string): Promise<void> {
+  public async killServer(serverID: string) {
     this.requestChangePowerstate(serverID, 'kill');
   }
 
@@ -230,10 +227,12 @@ export default class PteroClient {
    * Lists the Backups of a server.
    * @async @public @method listBackups
    * @param  {string} serverID The ID of the server.
-   * @returns {Promise<BackupListResponse>} The backups.
+   * @returns {Promise<BackupListResponse>} A list of backups on the server.
+   * @throws {ValidationError} If the response is invalid.
+   * @throws {PterodactylError} If the request failed because of a Pterodactyl error.
    * @throws {Error} If the request failed.
    */
-  public async listBackups(serverID: string): Promise<BackupListResponse> {
+  public async listBackups(serverID: string) {
     try {
       const { data } = await axios.get(
         getRequestURL({
@@ -244,9 +243,13 @@ export default class PteroClient {
         getRequestHeaders(this.apiKey),
       );
 
-      return data;
+      const validated = BackupListResponseSchema.safeParse(data);
+
+      if (!validated.success) throw new ValidationError();
+
+      return validated.data;
     } catch (err) {
-      throw new Error(`Failed to list backups of server ${serverID}!`);
+      return handleError(err, `Failed to list backups for ${serverID}!`);
     }
   }
 
