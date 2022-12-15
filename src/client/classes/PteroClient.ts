@@ -2,22 +2,22 @@ import axios from 'axios';
 import type {
   AccountDetailsResponse,
   AuthDetails,
-  BackupCreateResponse,
   BackupListResponse,
   BackupOptions,
-  ListServersResponse,
 } from '../types/interfaces';
-import {
-  assertsAccountDetailsResponse,
-  assertsBackupCreateResponse,
-  assertsBackupListResponse,
-  assertsListFilesResponse,
-  assertsListServersResponse,
-} from '../util/assertions';
 import { ClientEndpoints } from '../util/clientEndpoints';
-import { getError } from '../util/handleErrors';
+import { handleError } from '../util/handleErrors';
 import { getRequestHeaders, getRequestURL } from '../util/requests';
+import {
+  BackupCreateResponse,
+  BackupCreateResponseSchema,
+} from '../validation/createBackupSchema';
+import {
+  ListServersResponse,
+  listServersResponseSchema,
+} from '../validation/listServersSchema';
 import { PterodactylError } from './PterodactylError';
+import { ValidationError } from './ValidationError';
 
 /**
  * The PteroClient class is the main class of the API wrapper.
@@ -50,6 +50,7 @@ export default class PteroClient {
    * @param  {string} serverID The ID of the server.
    * @param  {'start' | 'stop' | 'restart' | 'kill'} action The action to perform.
    * @returns {Promise<void>}
+   * @throws {PterodactylError} If the request failed due to an API Error.
    * @throws {Error} If the request failed.
    */
   private async requestChangePowerstate(
@@ -57,7 +58,7 @@ export default class PteroClient {
     action: 'start' | 'stop' | 'restart' | 'kill',
   ): Promise<void> {
     try {
-      const { status } = await axios.post(
+      return await axios.post(
         getRequestURL({
           hostURL: this.baseURL,
           endpoint: ClientEndpoints.changePowerState,
@@ -66,10 +67,8 @@ export default class PteroClient {
         { signal: action },
         getRequestHeaders(this.apiKey),
       );
-
-      if (status !== 204) throw new Error();
     } catch (err) {
-      throw new Error(`Failed to ${action} server ${serverID}!`);
+      return handleError(err, `Failed to ${action} server ${serverID}!`);
     }
   }
 
@@ -84,10 +83,22 @@ export default class PteroClient {
   }
 
   /**
+   * Checks if the error is a ValidationError.
+   * @public @method isValidationError
+   * @param  {unknown} error
+   * @returns {boolean} Whether the error is a ValidationError.
+   */
+  public isValidationError(error: unknown): error is ValidationError {
+    return error instanceof ValidationError;
+  }
+
+  /**
    * Lists all servers the client has access to.
    * @async @public @method listServers
    * @returns {Promise<ListServersResponse>} The list of servers.
    * @throws {Error} If the request failed.
+   * @throws {APIValidationError} If the response is different than expected.
+   * @throws {PterodactylError} If the request failed due to an error on the server.
    */
   public async listServers(): Promise<ListServersResponse> {
     try {
@@ -99,14 +110,25 @@ export default class PteroClient {
         getRequestHeaders(this.apiKey),
       );
 
-      assertsListServersResponse(data);
+      const validated = listServersResponseSchema.safeParse(data);
 
-      return data;
+      if (!validated.success) throw new ValidationError();
+
+      return validated.data;
     } catch (err) {
-      throw new Error('Failed to list servers!');
+      return handleError(err, 'Failed to list servers!');
     }
   }
 
+  /**
+   * Lists files in a directory.
+   * @async @public @method listFiles
+   * @param  {string} serverID The ID of the server.
+   * @param  {string} [directory='/'] The directory to list files in.
+   * @returns {Promise<ListFilesResponse>} The list of files.
+   * @throws {Error} If the request failed.
+   * @throws {PterodactylError} If the request failed.
+   */
   public async listFiles(serverID: string, directory = '/') {
     directory = encodeURIComponent(directory);
 
@@ -120,17 +142,9 @@ export default class PteroClient {
         getRequestHeaders(this.apiKey),
       );
 
-      assertsListFilesResponse(data);
-
       return data;
     } catch (err) {
-      const error = getError(err);
-
-      if (!error) {
-        throw new Error(`Failed to create backup of server ${serverID}!`);
-      }
-
-      throw new PterodactylError(error);
+      return handleError(err, `Failed to create backup of server ${serverID}!`);
     }
   }
 
@@ -149,8 +163,6 @@ export default class PteroClient {
         }),
         getRequestHeaders(this.apiKey),
       );
-
-      assertsAccountDetailsResponse(data);
 
       return data;
     } catch (err) {
@@ -220,22 +232,21 @@ export default class PteroClient {
         getRequestHeaders(this.apiKey),
       );
 
-      assertsBackupListResponse(data);
-
       return data;
     } catch (err) {
       throw new Error(`Failed to list backups of server ${serverID}!`);
     }
   }
 
-  /**s
+  /**
    * Creates a backup of a server.
    * @async @public @method createBackup
    * @param  {string} serverID The ID of the server.
    * @param  {BackupOptions} [options] The options for the backup.
    * @returns {Promise<BackupCreateResponse>} The backup.
-   * @throws {Error} If the request failed.
+   * @throws {ValidationError} If the response is invalid.
    * @throws {PterodactylError} If the request failed because of a Pterodactyl error.
+   * @throws {Error} If the request failed.
    */
   public async createBackup(
     serverID: string,
@@ -257,17 +268,13 @@ export default class PteroClient {
         getRequestHeaders(this.apiKey),
       );
 
-      assertsBackupCreateResponse(data);
+      const validated = BackupCreateResponseSchema.safeParse(data);
 
-      return data;
+      if (!validated.success) throw new ValidationError();
+
+      return validated.data;
     } catch (err) {
-      const error = getError(err);
-
-      if (!error) {
-        throw new Error(`Failed to create backup of server ${serverID}!`);
-      }
-
-      throw new PterodactylError(error);
+      return handleError(err, `Failed to create backup of server ${serverID}!`);
     }
   }
 }
