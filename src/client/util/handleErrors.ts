@@ -1,4 +1,6 @@
 import axios, { AxiosError } from 'axios';
+import { PterodactylError } from '../classes/PterodactylError';
+import { ValidationError } from '../classes/ValidationError';
 import type { APIError } from '../types/interfaces';
 
 const getAPIErrors = (err: AxiosError): APIError[] | undefined => {
@@ -13,7 +15,7 @@ const getAPIErrors = (err: AxiosError): APIError[] | undefined => {
     err.response.data &&
     'errors' in err.response.data &&
     Array.isArray(err.response.data.errors) &&
-    err.response.data.errors.every((error) => isPteroAPIError(error))
+    err.response.data.errors.every((error) => isAPIError(error))
   ) {
     return err.response.data.errors as APIError[];
   }
@@ -21,7 +23,11 @@ const getAPIErrors = (err: AxiosError): APIError[] | undefined => {
   return;
 };
 
-export const isPteroAPIError = (err: unknown): err is APIError => {
+const isValidationError = (err: unknown): err is ValidationError => {
+  return err instanceof ValidationError;
+};
+
+const isAPIError = (err: unknown): err is APIError => {
   return (
     typeof err === 'object' &&
     err !== null &&
@@ -31,12 +37,18 @@ export const isPteroAPIError = (err: unknown): err is APIError => {
   );
 };
 
-export const getError = (error: unknown) => {
-  if (!axios.isAxiosError(error)) return;
+export const handleError = (error: unknown, message: string): never => {
+  if (isValidationError(error)) throw error;
 
-  const apiErrors = getAPIErrors(error);
+  if (axios.isAxiosError(error)) {
+    const apiErrors = getAPIErrors(error);
 
-  if (!apiErrors || !apiErrors[0]) return;
+    if (apiErrors && apiErrors[0]) {
+      throw new PterodactylError(apiErrors[0]);
+    } else {
+      throw new Error(message);
+    }
+  }
 
-  return apiErrors[0];
+  throw new Error(message);
 };
