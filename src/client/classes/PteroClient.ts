@@ -11,11 +11,9 @@ import { getRequestHeaders, getRequestURL } from '../util/requests';
 import {
   BackupCreateResponse,
   BackupCreateResponseSchema,
-} from '../validation/createBackupSchema';
-import {
-  ListServersResponse,
-  listServersResponseSchema,
-} from '../validation/listServersSchema';
+} from '../validation/BackupSchema';
+import { ListFilesResponseSchema } from '../validation/FileSchema';
+import { listServersResponseSchema } from '../validation/listServersSchema';
 import { PterodactylError } from './PterodactylError';
 import { ValidationError } from './ValidationError';
 
@@ -96,11 +94,11 @@ export default class PteroClient {
    * Lists all servers the client has access to.
    * @async @public @method listServers
    * @returns {Promise<ListServersResponse>} The list of servers.
-   * @throws {Error} If the request failed.
    * @throws {APIValidationError} If the response is different than expected.
    * @throws {PterodactylError} If the request failed due to an error on the server.
+   * @throws {Error} If the request failed.
    */
-  public async listServers(): Promise<ListServersResponse> {
+  public async listServers() {
     try {
       const { data } = await axios.get(
         getRequestURL({
@@ -124,13 +122,14 @@ export default class PteroClient {
    * Lists files in a directory.
    * @async @public @method listFiles
    * @param  {string} serverID The ID of the server.
-   * @param  {string} [directory='/'] The directory to list files in.
+   * @param  {string} [directory='/'] The directory to list.
    * @returns {Promise<ListFilesResponse>} The list of files.
+   * @throws {APIValidationError} If the response is different than expected.
+   * @throws {PterodactylError} If the request failed due to an error on the server.
    * @throws {Error} If the request failed.
-   * @throws {PterodactylError} If the request failed.
    */
   public async listFiles(serverID: string, directory = '/') {
-    directory = encodeURIComponent(directory);
+    const encoded = encodeURIComponent(directory);
 
     try {
       const { data } = await axios.get(
@@ -138,13 +137,20 @@ export default class PteroClient {
           hostURL: this.baseURL,
           endpoint: ClientEndpoints.listFiles,
           serverID: serverID,
-        }) + directory,
+        }) + encoded,
         getRequestHeaders(this.apiKey),
       );
 
-      return data;
+      const validated = ListFilesResponseSchema.safeParse(data);
+
+      if (!validated.success) throw new ValidationError();
+
+      return validated.data;
     } catch (err) {
-      return handleError(err, `Failed to create backup of server ${serverID}!`);
+      return handleError(
+        err,
+        `Failed to list items for ${serverID} in ${directory}!`,
+      );
     }
   }
 

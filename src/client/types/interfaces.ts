@@ -78,23 +78,5 @@ export interface BackupOptions {
   locked?: boolean;
 }
 
-interface PterodactylFile {
-  object: 'file_object';
-  attributes: {
-    name: string;
-    mode: string;
-    mode_bits: string;
-    size: number;
-    is_file: boolean;
-    is_symlink: boolean;
-    mimetype: string;
-    created_at: string;
-    modified_at: string;
-  };
-}
-export interface ListFilesResponse {
-  object: 'list';
-  data: PterodactylFile[];
-}
 /*
  */
