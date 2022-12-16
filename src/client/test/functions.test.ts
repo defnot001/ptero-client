@@ -1,8 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { client } from '../../test';
-import { PterodactylError } from '../classes/errors/Errors';
 import PteroClient from '../classes/PteroClient';
-import { ValidationError } from '../classes/ValidationError';
+import { PterodactylError, ValidationError } from '../classes/errors/Errors';
 
 describe('testPteroClientConstructor', () => {
   it('should return an instance of PteroClient', () => {
@@ -29,11 +28,11 @@ describe('testIsPterodactylError', () => {
   });
 
   it('should return true', () => {
-    expect(client.isPterodactylError(pteroError)).toBe(true);
+    expect(client.errors.isPterodactylError(pteroError)).toBe(true);
   });
 
   it('should return false', () => {
-    expect(client.isPterodactylError(new Error())).toBe(false);
+    expect(client.errors.isPterodactylError(new Error())).toBe(false);
   });
 });
 
@@ -41,10 +40,10 @@ describe('testIsValidationError', () => {
   const validationError = new ValidationError();
 
   it('should return true', () => {
-    expect(client.isValidationError(validationError)).toBe(true);
+    expect(client.errors.isValidationError(validationError)).toBe(true);
   });
 
   it('should return false', () => {
-    expect(client.isValidationError(new Error())).toBe(false);
+    expect(client.errors.isValidationError(new Error())).toBe(false);
   });
 });
