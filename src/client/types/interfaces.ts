@@ -29,5 +29,10 @@ export interface BackupOptions {
   locked?: boolean;
 }
 
+export interface RenameOptions {
+  from: string;
+  to: string;
+  directory?: string;
+}
 /*
  */
