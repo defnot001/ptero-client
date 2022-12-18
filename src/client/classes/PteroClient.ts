@@ -3,7 +3,6 @@ import AccountManager from './helpers/AccountManager';
 import BackupManager from './helpers/BackupManager';
 import ErrorManager from './helpers/ErrorManager';
 import FileManager from './helpers/FileManager';
-import PowerstateManager from './helpers/PowerstateManager';
 import ServerManager from './helpers/ServerManager';
 
 /**
@@ -18,7 +17,6 @@ export default class PteroClient {
   public files: FileManager;
   public backups: BackupManager;
   public servers: ServerManager;
-  public power: PowerstateManager;
   public account: AccountManager;
   public errors: ErrorManager;
 
@@ -40,7 +38,6 @@ export default class PteroClient {
     this.files = new FileManager(authDetails);
     this.backups = new BackupManager(authDetails);
     this.servers = new ServerManager(authDetails);
-    this.power = new PowerstateManager(authDetails);
     this.account = new AccountManager(authDetails);
     this.errors = new ErrorManager();
   }
