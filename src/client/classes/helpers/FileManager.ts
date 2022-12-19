@@ -291,7 +291,7 @@ export default class FileManager {
     if (!directory.startsWith('/')) directory = `/${directory}`;
     if (!directory.endsWith('/')) directory = `${directory}/`;
 
-    const object = {
+    const obj = {
       root: directory,
       file: fileName,
     };
@@ -303,13 +303,43 @@ export default class FileManager {
           endpoint: ClientEndpoints.decompressFile,
           serverID: serverID,
         }),
-        object,
+        obj,
         getRequestHeaders(this.apiKey),
       );
 
       return;
     } catch (err) {
       return handleError(err, `Failed to decompress ${fileName + directory}!`);
+    }
+  }
+
+  public async delete(
+    serverID: string,
+    fileNames: string[],
+    directory = '/',
+  ): Promise<void> {
+    if (!directory.startsWith('/')) directory = `/${directory}`;
+    if (!directory.endsWith('/')) directory = `${directory}/`;
+
+    const object = {
+      root: directory,
+      files: [...fileNames],
+    };
+
+    try {
+      await axios.post(
+        getRequestURL({
+          hostURL: this.baseURL,
+          endpoint: ClientEndpoints.deleteFile,
+          serverID: serverID,
+        }),
+        object,
+        getRequestHeaders(this.apiKey),
+      );
+
+      return;
+    } catch (err) {
+      return handleError(err, `Failed to delete ${fileNames}!`);
     }
   }
 }

@@ -9,6 +9,7 @@ export const enum ClientEndpoints {
   writeFile = 'api/client/servers/:server_id/files/write?file=',
   compressFile = 'api/client/servers/:server_id/files/compress',
   decompressFile = 'api/client/servers/:server_id/files/decompress',
+  deleteFile = 'api/client/servers/:server_id/files/delete',
   changePowerState = 'api/client/servers/:server_id/power',
   listBackups = 'api/client/servers/:server_id/backups',
   createBackup = 'api/client/servers/:server_id/backups',
