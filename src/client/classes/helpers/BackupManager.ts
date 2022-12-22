@@ -1,55 +1,46 @@
-import axios from 'axios';
-import type { AuthDetails, BackupOptions } from '../../types/interfaces';
-import { ClientEndpoints } from '../../util/clientEndpoints';
+import axios, { AxiosInstance } from 'axios';
+import type { BackupOptions } from '../../types/interfaces';
+import { ClientEndpoints, replaceVariables } from '../../util/clientEndpoints';
 import { handleError } from '../../util/handleErrors';
-import { getRequestHeaders, getRequestURL } from '../../util/requests';
+import { transformBackup } from '../../util/transformBackup';
+import { validateResponse } from '../../util/zodValidation';
 import {
+  BackupDownloadResponse,
   BackupDownloadSchema,
+  BackupListResponse,
   BackupListResponseSchema,
+  BackupResponse,
+  BackupResponseSchema,
   PterodactylBackup,
+  PterodactylBackupListMeta,
 } from '../../validation/BackupSchema';
-import { ValidationError } from '../errors/Errors';
 
-/**
- * This class is used to manage backups.
- * @public @class BackupManager
- * @param  {AuthDetails} authDetails The authentication details.
- * @returns {BackupManager} The BackupManager instance.
- */
 export default class BackupManager {
-  private readonly baseURL: string;
-  private readonly apiKey: string;
-
-  public constructor(authDetails: AuthDetails) {
-    this.baseURL = authDetails.hostURL;
-    this.apiKey = authDetails.apiKey;
-  }
+  public constructor(private http: AxiosInstance) {}
 
   /**
    * Lists the Backups of a server.
    * @async @public @method list
    * @param  {string} serverID The ID of the server.
-   * @returns {Promise<BackupListResponse>} A list of backups on the server.
+   * @returns {Promise<{ data: PterodactylBackup[]; meta: PterodactylBackupListMeta }} A list of backups on the server and the meta data.
    * @throws {ValidationError} If the response is invalid.
    * @throws {PterodactylError} If the request failed because of a Pterodactyl error.
    * @throws {Error} If the request failed.
    */
-  public async list(serverID: string) {
+  public async list(
+    serverID: string,
+  ): Promise<{ data: PterodactylBackup[]; meta: PterodactylBackupListMeta }> {
+    const url = replaceVariables(ClientEndpoints.listBackups, { serverID });
     try {
-      const { data } = await axios.get(
-        getRequestURL({
-          hostURL: this.baseURL,
-          endpoint: ClientEndpoints.listBackups,
-          serverID: serverID,
-        }),
-        getRequestHeaders(this.apiKey),
+      const { data } = await this.http.get<BackupListResponse>(url);
+
+      const validated = validateResponse(BackupListResponseSchema, data);
+
+      const backupList: PterodactylBackup[] = validated.data.map((backup) =>
+        transformBackup(backup.attributes),
       );
 
-      const validated = BackupListResponseSchema.safeParse(data);
-
-      if (!validated.success) throw new ValidationError();
-
-      return validated.data;
+      return { data: backupList, meta: validated.meta };
     } catch (err) {
       return handleError(err, `Failed to list backups for ${serverID}!`);
     }
@@ -75,21 +66,16 @@ export default class BackupManager {
 
       const locked = options?.locked || false;
 
-      const { data } = await axios.post(
-        getRequestURL({
-          hostURL: this.baseURL,
-          endpoint: ClientEndpoints.createBackup,
-          serverID: serverID,
-        }),
-        { name: backupName, is_locked: locked },
-        getRequestHeaders(this.apiKey),
-      );
+      const url = replaceVariables(ClientEndpoints.createBackup, { serverID });
 
-      const validated = PterodactylBackup.safeParse(data);
+      const { data } = await this.http.post<BackupResponse>(url, {
+        name: backupName,
+        is_locked: locked,
+      });
 
-      if (!validated.success) throw new ValidationError();
+      const { attributes } = validateResponse(BackupResponseSchema, data);
 
-      return validated.data;
+      return transformBackup(attributes);
     } catch (err) {
       return handleError(err, `Failed to create backup of server ${serverID}!`);
     }
@@ -105,23 +91,20 @@ export default class BackupManager {
    * @throws {PterodactylError} If the request failed because of a Pterodactyl error.
    * @throws {Error} If the request failed.
    */
-  public async getDetails(serverID: string, backupID: string) {
+  public async getDetails(
+    serverID: string,
+    backupID: string,
+  ): Promise<PterodactylBackup> {
+    const url = replaceVariables(ClientEndpoints.backupDetails, {
+      serverID,
+      backupID,
+    });
+
     try {
-      const { data } = await axios.get(
-        getRequestURL({
-          hostURL: this.baseURL,
-          endpoint: ClientEndpoints.backupDetails,
-          serverID: serverID,
-          backupID: backupID,
-        }),
-        getRequestHeaders(this.apiKey),
-      );
+      const { data } = await this.http.get<BackupResponse>(url);
+      const { attributes } = validateResponse(BackupResponseSchema, data);
 
-      const validated = PterodactylBackup.safeParse(data);
-
-      if (!validated.success) throw new ValidationError();
-
-      return validated.data;
+      return transformBackup(attributes);
     } catch (err) {
       return handleError(
         err,
@@ -135,28 +118,22 @@ export default class BackupManager {
    * @async @public @method download
    * @param {string} serverID The ID of the server.
    * @param {string} backupID The ID of the backup.
-   * @returns {Promise<BackupDownloadResponse>} The download link.
+   * @returns {Promise<string>} The download link.
    * @throws {ValidationError} If the response is invalid.
    * @throws {PterodactylError} If the request failed because of a Pterodactyl error.
    * @throws {Error} If the request failed.
    */
-  public async download(serverID: string, backupID: string) {
+  public async download(serverID: string, backupID: string): Promise<string> {
+    const url = replaceVariables(ClientEndpoints.downloadBackup, {
+      serverID,
+      backupID,
+    });
+
     try {
-      const { data } = await axios.get(
-        getRequestURL({
-          hostURL: this.baseURL,
-          endpoint: ClientEndpoints.downloadBackup,
-          serverID: serverID,
-          backupID: backupID,
-        }),
-        getRequestHeaders(this.apiKey),
-      );
+      const { data } = await this.http.get<BackupDownloadResponse>(url);
+      const { attributes } = validateResponse(BackupDownloadSchema, data);
 
-      const validated = BackupDownloadSchema.safeParse(data);
-
-      if (!validated.success) throw new ValidationError();
-
-      return validated.data;
+      return attributes.url;
     } catch (err) {
       return handleError(
         err,
@@ -175,18 +152,13 @@ export default class BackupManager {
    * @throws {Error} If the request failed.
    */
   public async delete(serverID: string, backupID: string) {
-    try {
-      await axios.delete(
-        getRequestURL({
-          hostURL: this.baseURL,
-          endpoint: ClientEndpoints.deleteBackup,
-          serverID: serverID,
-          backupID: backupID,
-        }),
-        getRequestHeaders(this.apiKey),
-      );
+    const url = replaceVariables(ClientEndpoints.deleteBackup, {
+      serverID,
+      backupID,
+    });
 
-      return;
+    try {
+      return await axios.delete<void>(url);
     } catch (err) {
       return handleError(
         err,

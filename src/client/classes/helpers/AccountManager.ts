@@ -1,20 +1,15 @@
-import axios from 'axios';
-import type { AuthDetails } from '../../types/interfaces';
+import type { AxiosInstance } from 'axios';
 import { ClientEndpoints } from '../../util/clientEndpoints';
 import { handleError } from '../../util/handleErrors';
-import { getRequestHeaders, getRequestURL } from '../../util/requests';
-import { AccountDetailsResponseSchema } from '../../validation/AccountSchema';
-import { ValidationError } from '../errors/Errors';
+import { validateResponse } from '../../util/zodValidation';
+import {
+  AccountDetails,
+  AccountDetailsResponse,
+  AccountDetailsResponseSchema,
+} from '../../validation/AccountSchema';
 
 export default class AccountManager {
-  private readonly baseURL: string;
-  private readonly apiKey: string;
-
-  public constructor(authDetails: AuthDetails) {
-    this.baseURL = authDetails.hostURL;
-    this.apiKey = authDetails.apiKey;
-  }
-
+  public constructor(private http: AxiosInstance) {}
   /**
    * Gets the account details of the user.
    * @async @public @method getDetails
@@ -23,21 +18,15 @@ export default class AccountManager {
    * @throws {PterodactylError} If the request failed due to an error on the server.
    * @throws {Error} If the request failed.
    */
-  public async getDetails() {
+  public async getDetails(): Promise<AccountDetails> {
     try {
-      const { data } = await axios.get(
-        getRequestURL({
-          hostURL: this.baseURL,
-          endpoint: ClientEndpoints.getAccountDetails,
-        }),
-        getRequestHeaders(this.apiKey),
+      const { data } = await this.http.get<AccountDetailsResponse>(
+        ClientEndpoints.getAccountDetails,
       );
 
-      const validated = AccountDetailsResponseSchema.safeParse(data);
+      const validated = validateResponse(AccountDetailsResponseSchema, data);
 
-      if (!validated.success) throw new ValidationError();
-
-      return validated.data;
+      return validated.attributes;
     } catch (err) {
       return handleError(err, 'Failed to get the account details!');
     }
