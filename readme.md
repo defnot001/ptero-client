@@ -29,23 +29,32 @@ After that you are ready to use it for example like this. Make sure to catch Err
 
 ```ts
 try {
-  const backups: PteroBackupListResponseData = await client.listBackups(
-    'b5e8b2e0',
-  );
-  console.log(backups);
-} catch (error) {
-  console.error(error);
+  const { data, meta } = await client.backups.list('fbb9784b');
+
+  console.log(data[0]);
+  console.log(meta.backup_count);
+} catch (err) {
+  console.error(err);
 }
 ```
 
-If a function throws, you will get an Error that is as accurate and descriptive as possible. Alongside the error message, you also get a custom error object that you can use to handle different scenarios.
+If a function throws, you will get an **Error** that is as accurate and descriptive as possible.
 
-Here is an example custom error object from trying to create a backup on a server that has already reached it's limit:
+Here is an example **Error** from trying to create a backup on a server that has already reached its limit:
 
-```ts
-  code: 'TooManyBackupsException',
-  status: '400',
-  detail: 'Cannot create a new backup, this server has reached its limit of 5 backups.'
-```
+`PterodactylError: Status: 400 (TooManyBackupsException): Cannot create a new backup, this server has reached its limit of 0 backups.`
+
+Addionally, every method that is available to the consumer has `documentation comments` that describe:
+
+- what the method **does**
+- what the method **returns**
+- what the **parameters** are
+- **how** to use it (including an **example**)
+
+This gives you documentation of the available features directly in your IDE:
+
+<img src="assets/createBackupDocs.png" alt="Picture of the documentation of the backup.create() method" width="400"/>
+
+It is strongly recommended to use this library with [Typescript](https://www.typescriptlang.org/) because it is specifically made with maximum type-safety in mind. Additionally you get nice auto-complete ~~and we all know that this is a good selling point for TS~~.
 
 If you want to contribute, suggest features or just talk to me about anything, consider joining my [Discord Server](https://discord.gg/wmJ3WBYcZF), open an [issue](https://github.com/defnot001/ptero-client/issues) or [email](mailto:defnot001@gmail.com) me!
