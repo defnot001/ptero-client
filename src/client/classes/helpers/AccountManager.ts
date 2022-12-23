@@ -11,12 +11,18 @@ import {
 export default class AccountManager {
   public constructor(private http: AxiosInstance) {}
   /**
-   * Gets the account details of the user.
-   * @async @public @method getDetails
-   * @returns {Promise<AccountDetailsResponse>} The account details.
-   * @throws {APIValidationError} If the response is different than expected.
-   * @throws {PterodactylError} If the request failed due to an error on the server.
-   * @throws {Error} If the request failed.
+   * An asynchronous method that resolves to the account details of the `client user`.
+   * The promise will reject if the request fails.
+   * Make sure to `await` the method call and handle potential **errors**.
+   * ```ts
+   * try {
+   * const response = await client.account.getDetails();
+   * console.log(response.first_name);
+   * // => 'John'
+   * } catch (err) {
+   * console.error(err);
+   * }
+   * ```
    */
   public async getDetails(): Promise<AccountDetails> {
     try {
