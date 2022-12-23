@@ -2,9 +2,9 @@ import axios, { AxiosInstance } from 'axios';
 import type { BackupOptions } from '../../types/interfaces';
 import { ClientEndpoints, replaceVariables } from '../../util/clientEndpoints';
 import { handleError } from '../../util/handleErrors';
-import { transformBackup } from '../../util/transformBackup';
 import { validateResponse } from '../../util/zodValidation';
 import {
+  BackupAttributes,
   BackupDownloadResponse,
   BackupDownloadSchema,
   BackupListResponse,
@@ -18,11 +18,19 @@ import {
 export default class BackupManager {
   public constructor(private http: AxiosInstance) {}
 
+  private transformBackup(backup: BackupAttributes): PterodactylBackup {
+    return {
+      ...backup,
+      created_at: new Date(backup.created_at),
+      completed_at: backup.completed_at ? new Date(backup.completed_at) : null,
+    };
+  }
+
   /**
    * Lists the Backups of a server.
    * @async @public @method list
-   * @param  {string} serverID The ID of the server.
-   * @returns {Promise<{ data: PterodactylBackup[]; meta: PterodactylBackupListMeta }} A list of backups on the server and the meta data.
+   * @param {string} serverID The ID of the server.
+   * @returns {Promise<{ data: PterodactylBackup[]; meta: PterodactylBackupListMeta }>} A list of backups on the server and the meta data.
    * @throws {ValidationError} If the response is invalid.
    * @throws {PterodactylError} If the request failed because of a Pterodactyl error.
    * @throws {Error} If the request failed.
@@ -37,7 +45,7 @@ export default class BackupManager {
       const validated = validateResponse(BackupListResponseSchema, data);
 
       const backupList: PterodactylBackup[] = validated.data.map((backup) =>
-        transformBackup(backup.attributes),
+        this.transformBackup(backup.attributes),
       );
 
       return { data: backupList, meta: validated.meta };
@@ -75,7 +83,7 @@ export default class BackupManager {
 
       const { attributes } = validateResponse(BackupResponseSchema, data);
 
-      return transformBackup(attributes);
+      return this.transformBackup(attributes);
     } catch (err) {
       return handleError(err, `Failed to create backup of server ${serverID}!`);
     }
@@ -104,7 +112,7 @@ export default class BackupManager {
       const { data } = await this.http.get<BackupResponse>(url);
       const { attributes } = validateResponse(BackupResponseSchema, data);
 
-      return transformBackup(attributes);
+      return this.transformBackup(attributes);
     } catch (err) {
       return handleError(
         err,
@@ -115,7 +123,7 @@ export default class BackupManager {
 
   /**
    * Generates a download link for a backup.
-   * @async @public @method download
+   * @async @public @method getDownloadLink
    * @param {string} serverID The ID of the server.
    * @param {string} backupID The ID of the backup.
    * @returns {Promise<string>} The download link.
@@ -123,7 +131,10 @@ export default class BackupManager {
    * @throws {PterodactylError} If the request failed because of a Pterodactyl error.
    * @throws {Error} If the request failed.
    */
-  public async download(serverID: string, backupID: string): Promise<string> {
+  public async getDownloadLink(
+    serverID: string,
+    backupID: string,
+  ): Promise<string> {
     const url = replaceVariables(ClientEndpoints.downloadBackup, {
       serverID,
       backupID,
