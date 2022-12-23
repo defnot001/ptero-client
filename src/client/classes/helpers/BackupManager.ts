@@ -15,9 +15,19 @@ import {
   PterodactylBackupListMeta,
 } from '../../validation/BackupSchema';
 
+/**
+ * A class that manages backups on a pterodactyl server. As a user of this library, you don't need to instantiate this class yourself. It is already instantiated in the `PteroClient` class.\
+ * \
+ * The BackupManager takes in an `AxiosInstance` as a constructor parameter. This is the `http` instance of the `PteroClient` class.
+ */
 export default class BackupManager {
   public constructor(private http: AxiosInstance) {}
 
+  /**
+   * A private method that transforms the backup attributes to a more readable format.
+   * @param backup The backup attributes.
+   * @returns {PterodactylBackup} The transformed backup object with the type `PterodactylBackup`.
+   */
   private transformBackup(backup: BackupAttributes): PterodactylBackup {
     return {
       ...backup,
@@ -27,13 +37,18 @@ export default class BackupManager {
   }
 
   /**
-   * Lists the Backups of a server.
-   * @async @public @method list
-   * @param {string} serverID The ID of the server.
-   * @returns {Promise<{ data: PterodactylBackup[]; meta: PterodactylBackupListMeta }>} A list of backups on the server and the meta data.
-   * @throws {ValidationError} If the response is invalid.
-   * @throws {PterodactylError} If the request failed because of a Pterodactyl error.
-   * @throws {Error} If the request failed.
+   * An `async` method that resolves to a list of all backups on a pterodactyl server. Additionally it returns the backup meta.
+   * The promise will reject if the request fails.
+   * @param serverID The ID of the server. It can be found in the URL of the server. (e.g. `https://panel.example.com/admin/servers/fe564c9a`)
+   *
+   * Make sure to `await` the method call and handle potential **errors**.
+   * ```ts
+   * const { data, meta } = await client.backups.list('fe564c9a');
+   * console.log(data[0]);
+   * // logs the first (oldest) backup in the list to the console.
+   * console.log(`Current backup count: ${meta.pagination.total}`);
+   * // => Current backup count: 3
+   *```
    */
   public async list(
     serverID: string,
@@ -55,14 +70,18 @@ export default class BackupManager {
   }
 
   /**
-   * Creates a backup of a server.
-   * @async @public @method create
-   * @param  {string} serverID The ID of the server.
-   * @param  {BackupOptions} [options] The options for the backup.
-   * @returns {Promise<BackupCreateResponse>} The backup.
-   * @throws {ValidationError} If the response is invalid.
-   * @throws {PterodactylError} If the request failed because of a Pterodactyl error.
-   * @throws {Error} If the request failed.
+   * An `async` method that creates a backup on a pterodactyl server and resolves to an object with the backup details.
+   * The promise will reject if the request fails.
+   * @param serverID The ID of the server. It can be found in the URL of the server. (e.g. `https://panel.example.com/admin/servers/fe564c9a`)
+   * @param options The options for the backup. You can specify a custom name for the backup and whether it should be locked. If you don't pass any options, the backup will be named `Backup at <current date> with ptero-client.` and it will not be locked.
+   *
+   * Make sure to `await` the method call and handle potential **errors**.
+   * ```ts
+   * const backup: PterodactylBackup = await client.backups.create('fe564c9a', {
+   *    backupName: 'My custom backup name',
+   *    locked: true,
+   * });
+   * ```
    */
   public async create(
     serverID: string,
@@ -90,14 +109,15 @@ export default class BackupManager {
   }
 
   /**
-   * Gets the details of a backup.
-   * @async @public @method getDetails
-   * @param {string} serverID The ID of the server.
-   * @param {string} backupID The ID of the backup.
-   * @returns {Promise<PterodactylBackup>} The details of the backup.
-   * @throws {ValidationError} If the response is invalid.
-   * @throws {PterodactylError} If the request failed because of a Pterodactyl error.
-   * @throws {Error} If the request failed.
+   * An `async` method that resolves to the details of a specific backups on a pterodactyl server.
+   * The promise will reject if the request fails.
+   * @param serverID The ID of the server. It can be found in the URL of the server. (e.g. `https://panel.example.com/admin/servers/fe564c9a`)
+   * @param backupID The ID of the backup. It can be found by using the `list()` method of the `BackupManager` class.
+   *
+   * Make sure to `await` the method call and handle potential **errors**.
+   * ```ts
+   * const backup: PterodactylBackup = await client.backups.getDetails('fe564c9a', '1ca291a8-e606-4f7d-b7c7-af183ae9d142');
+   * ```
    */
   public async getDetails(
     serverID: string,
@@ -122,14 +142,15 @@ export default class BackupManager {
   }
 
   /**
-   * Generates a download link for a backup.
-   * @async @public @method getDownloadLink
-   * @param {string} serverID The ID of the server.
-   * @param {string} backupID The ID of the backup.
-   * @returns {Promise<string>} The download link.
-   * @throws {ValidationError} If the response is invalid.
-   * @throws {PterodactylError} If the request failed because of a Pterodactyl error.
-   * @throws {Error} If the request failed.
+   * An `async` method that resolves a download url of a specific backups on a pterodactyl server.
+   * The promise will reject if the request fails.
+   * @param serverID The ID of the server. It can be found in the URL of the server. (e.g. `https://panel.example.com/admin/servers/fe564c9a`)
+   * @param backupID The ID of the backup. It can be found by using the `list()` or the getDetails() method of the `BackupManager` class.
+   *
+   * Make sure to `await` the method call and handle potential **errors**.
+   * ```ts
+   * const url: string = await client.backups.getDownloadLink('fe564c9a', '1ca291a8-e606-4f7d-b7c7-af183ae9d142');
+   * ```
    */
   public async getDownloadLink(
     serverID: string,
@@ -154,13 +175,15 @@ export default class BackupManager {
   }
 
   /**
-   * Deletes a backup.
-   * @async @public @method delete
-   * @param {string} serverID The ID of the server.
-   * @param {string} backupID The ID of the backup.
-   * @returns {Promise<void>}
-   * @throws {PterodactylError} If the request failed because of a Pterodactyl error.
-   * @throws {Error} If the request failed.
+   * An `async` method that deletes a specific backups on a pterodactyl server.
+   * The promise will reject if the request fails.
+   * @param serverID The ID of the server. It can be found in the URL of the server. (e.g. `https://panel.example.com/admin/servers/fe564c9a`)
+   * @param backupID The ID of the backup. It can be found by using the `list()` or the getDetails() method of the `BackupManager` class.
+   *
+   * Make sure to `await` the method call and handle potential **errors**.
+   * ```ts
+   * await client.backups.delete('fe564c9a', '1ca291a8-e606-4f7d-b7c7-af183ae9d142');
+   * ```
    */
   public async delete(serverID: string, backupID: string): Promise<void> {
     const url = replaceVariables(ClientEndpoints.deleteBackup, {

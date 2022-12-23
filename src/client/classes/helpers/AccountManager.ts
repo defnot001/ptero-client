@@ -8,20 +8,21 @@ import {
   AccountDetailsResponseSchema,
 } from '../../validation/AccountSchema';
 
+/**
+ * A class that manages the user account. As a user of this library, you don't need to instantiate this class yourself. It is already instantiated in the `PteroClient` class.\
+ * \
+ * The AccountManager takes in an `AxiosInstance` as a constructor parameter. This is the `http` instance of the `PteroClient` class.
+ */
 export default class AccountManager {
   public constructor(private http: AxiosInstance) {}
   /**
-   * An asynchronous method that resolves to the account details of the `client user`.
+   * An **asynchronous method that resolves to the account details of the `client user`.
    * The promise will reject if the request fails.
    * Make sure to `await` the method call and handle potential **errors**.
    * ```ts
-   * try {
    * const response = await client.account.getDetails();
    * console.log(response.first_name);
    * // => 'John'
-   * } catch (err) {
-   * console.error(err);
-   * }
    * ```
    */
   public async getDetails(): Promise<AccountDetails> {
