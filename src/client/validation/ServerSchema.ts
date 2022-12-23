@@ -74,5 +74,5 @@ export const listServersResponseSchema = z.object({
   data: z.array(PterodactylServerSchema),
 });
 
+export type PterodactylServer = z.infer<typeof PterodactylServerAttributes>;
 export type ListServersResponse = z.infer<typeof listServersResponseSchema>;
-export type PterodactylServer = z.infer<typeof PterodactylServerSchema>;

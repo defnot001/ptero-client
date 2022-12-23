@@ -16,3 +16,5 @@ export const AccountDetailsResponseSchema = z.object({
 export type AccountDetailsResponse = z.infer<
   typeof AccountDetailsResponseSchema
 >;
+
+export type AccountDetails = AccountDetailsResponse['attributes'];

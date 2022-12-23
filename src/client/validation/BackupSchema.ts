@@ -35,7 +35,7 @@ export const BackupListResponseSchema = z.object({
   meta: BackupListMeta,
 });
 
-export const PterodactylBackup = z.object({
+export const BackupResponseSchema = z.object({
   object: z.literal('backup'),
   attributes: BackupAttributes,
 });
@@ -47,15 +47,31 @@ export const BackupDownloadSchema = z.object({
   }),
 });
 
-export type PterodactylBackup = z.infer<typeof PterodactylBackup>;
+export type BackupAttributes = z.infer<typeof BackupAttributes>;
+export type BackupResponse = z.infer<typeof BackupResponseSchema>;
 export type BackupListResponse = z.infer<typeof BackupListResponseSchema>;
 export type BackupDownloadResponse = z.infer<typeof BackupDownloadSchema>;
 
-/*
-{
-  object: 'signed_url',
-  attributes: {
-    url: 'https://panel.cloudtechmc.com:8080/download/backup?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImp0aSI6IjdmMGJmZTc1ZTc3ZDk0MzhhODlhMGJlNmIxZTA5NjhhIn0.eyJpc3MiOiJodHRwczovL3BhbmVsLmNsb3VkdGVjaG1jLmNvbSIsImF1ZCI6WyJodHRwczovL3BhbmVsLmNsb3VkdGVjaG1jLmNvbTo4MDgwIl0sImp0aSI6IjdmMGJmZTc1ZTc3ZDk0MzhhODlhMGJlNmIxZTA5NjhhIiwiaWF0IjoxNjcxMTc5OTcxLCJuYmYiOjE2NzExNzk2NzEsImV4cCI6MTY3MTE4MDg3MSwiYmFja3VwX3V1aWQiOiJhNGUyMWZjMy0zNWM0LTQ3MjEtYmQ5Yy03ZTVhYTNkNTU5N2EiLCJzZXJ2ZXJfdXVpZCI6ImZlNTY0YzlhLWRhZGUtNDczZC05YmNmLWYyMTA2Mzg3ZGY0NyIsInVzZXJfdXVpZCI6ImQ5M2NjMmVkLTJkYTAtNDgyZi04NmNkLTI1NGNjMGUyY2M4NSIsInVzZXJfaWQiOjQwLCJ1bmlxdWVfaWQiOiJQSmpaTE02T21ZZGN0ZXZkIn0.hRpdCMr-Bmq9uqDQOQ4Zeo_8i8RVua6nb7N42yt9RPM'
-  }
-}
-*/
+export type PterodactylBackup = {
+  uuid: string;
+  is_successful: boolean;
+  is_locked: boolean;
+  name: string;
+  ignored_files: string[];
+  checksum: string | null;
+  bytes: number;
+  created_at: Date;
+  completed_at: Date | null;
+};
+
+export type PterodactylBackupListMeta = {
+  backup_count: number;
+  pagination: {
+    total: number;
+    count: number;
+    per_page: number;
+    current_page: number;
+    total_pages: number;
+    links: Record<string, unknown>;
+  };
+};
