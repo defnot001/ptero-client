@@ -1,3 +1,5 @@
+import type { AxiosInstance } from 'axios';
+import axios from 'axios';
 import type { AuthDetails } from '../types/interfaces';
 import AccountManager from './helpers/AccountManager';
 import BackupManager from './helpers/BackupManager';
@@ -11,34 +13,33 @@ import ServerManager from './helpers/ServerManager';
  * });
  */
 export default class PteroClient {
-  private readonly baseURL: string;
-  private readonly apiKey: string;
-
   public files: FileManager;
   public backups: BackupManager;
   public servers: ServerManager;
   public account: AccountManager;
   public errors: ErrorManager;
+  private http: AxiosInstance;
 
-  /**
-   * Creates a new PteroClient instance.
-   * @public @constructor
-   * @param  {AuthDetails} authDetails The authentication details.
-   * @throws {Error} If the base URL or API key is missing or invalid.
-   * @returns {PteroClient} The PteroClient instance.
-   */
-  public constructor(authDetails: AuthDetails) {
-    this.baseURL = authDetails.hostURL;
-    this.apiKey = authDetails.apiKey;
+  public constructor(private authDetails: AuthDetails) {
+    this.authDetails = authDetails;
 
-    if (!this.baseURL.trim() || !this.apiKey.trim()) {
+    if (!this.authDetails.baseURL.trim() || !this.authDetails.apiKey.trim()) {
       throw new Error('Missing/invalid base URL and/or API key!');
     }
 
-    this.files = new FileManager(authDetails);
-    this.backups = new BackupManager(authDetails);
-    this.servers = new ServerManager(authDetails);
-    this.account = new AccountManager(authDetails);
+    this.http = axios.create({
+      baseURL: this.authDetails.baseURL,
+      headers: {
+        Authorization: `Bearer ${this.authDetails.apiKey}`,
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+    });
+
+    this.files = new FileManager(this.http);
+    this.backups = new BackupManager(this.http);
+    this.servers = new ServerManager(this.http);
+    this.account = new AccountManager(this.http);
     this.errors = new ErrorManager();
   }
 }

@@ -1,5 +1,5 @@
 export interface AuthDetails {
-  hostURL: string;
+  baseURL: string;
   apiKey: string;
 }
 
@@ -11,7 +11,6 @@ export interface Headers {
   };
 }
 export interface RequestURLOptions {
-  hostURL: string;
   endpoint: string;
   serverID?: string;
   backupID?: string;
@@ -34,5 +33,3 @@ export interface RenameOptions {
   to: string;
   directory?: string;
 }
-/*
- */
