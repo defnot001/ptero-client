@@ -1,4 +1,4 @@
-import axios, { AxiosInstance } from 'axios';
+import type { AxiosInstance } from 'axios';
 import type { BackupOptions } from '../../types/interfaces';
 import { ClientEndpoints, replaceVariables } from '../../util/clientEndpoints';
 import { handleError } from '../../util/handleErrors';
@@ -162,14 +162,15 @@ export default class BackupManager {
    * @throws {PterodactylError} If the request failed because of a Pterodactyl error.
    * @throws {Error} If the request failed.
    */
-  public async delete(serverID: string, backupID: string) {
+  public async delete(serverID: string, backupID: string): Promise<void> {
     const url = replaceVariables(ClientEndpoints.deleteBackup, {
       serverID,
       backupID,
     });
 
     try {
-      return await axios.delete<void>(url);
+      await this.http.delete(url);
+      return;
     } catch (err) {
       return handleError(
         err,
