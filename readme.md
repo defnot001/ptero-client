@@ -51,9 +51,7 @@ Addionally, every method that is available to the consumer has `documentation co
 - what the **parameters** are
 - **how** to use it (including an **example**)
 
-This gives you documentation of the available features directly in your IDE:
-
-<img src="assets/createBackupDocs.png" alt="Picture of the documentation of the backup.create() method" width="400"/>
+This gives you documentation of the available features directly in your IDE.
 
 It is strongly recommended to use this library with [Typescript](https://www.typescriptlang.org/) because it is specifically made with maximum type-safety in mind. Additionally you get nice auto-complete ~~and we all know that this is a good selling point for TS~~.
 

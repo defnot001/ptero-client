@@ -1,5 +1,5 @@
 import type { ZodTypeAny } from 'zod';
-import { ValidationError } from '../classes/errors/Errors';
+import { ValidationError } from '../classes/ErrorManager';
 
 export const validateResponse = <T extends ZodTypeAny, R>(
   schema: T,

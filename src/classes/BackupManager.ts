@@ -1,8 +1,8 @@
 import type { AxiosInstance } from 'axios';
-import type { BackupOptions } from '../../types/interfaces';
-import { ClientEndpoints, replaceVariables } from '../../util/clientEndpoints';
-import { handleError } from '../../util/handleErrors';
-import { validateResponse } from '../../util/zodValidation';
+import type { BackupOptions } from '../types/interfaces';
+import { ClientEndpoints, replaceVariables } from '../util/clientEndpoints';
+import { handleError } from '../util/handleErrors';
+import { validateResponse } from '../util/zodValidation';
 import {
   BackupAttributes,
   BackupDownloadResponse,
@@ -13,7 +13,7 @@ import {
   BackupResponseSchema,
   PterodactylBackup,
   PterodactylBackupListMeta,
-} from '../../validation/BackupSchema';
+} from '../validation/BackupSchema';
 
 /**
  * A class that manages backups on a pterodactyl server. As a user of this library, you don't need to instantiate this class yourself. It is already instantiated in the `PteroClient` class.\

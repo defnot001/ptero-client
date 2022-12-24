@@ -1,43 +1,36 @@
-import axios from 'axios';
-import type { AuthDetails } from '../../types/interfaces';
-import { ClientEndpoints } from '../../util/clientEndpoints';
-import { handleError } from '../../util/handleErrors';
-import { getRequestHeaders, getRequestURL } from '../../util/requests';
-import { listServersResponseSchema } from '../../validation/ServerSchema';
-import { ValidationError } from '../errors/Errors';
+import type { AxiosInstance } from 'axios';
+import { ClientEndpoints, replaceVariables } from '../util/clientEndpoints';
+import { handleError } from '../util/handleErrors';
+import { validateResponse } from '../util/zodValidation';
+import {
+  ListServersResponse,
+  PterodactylServer,
+  listServersResponseSchema,
+} from '../validation/ServerSchema';
 
 export default class ServerManager {
-  private readonly baseURL: string;
-  private readonly apiKey: string;
-
-  constructor(authDetails: AuthDetails) {
-    this.baseURL = authDetails.hostURL;
-    this.apiKey = authDetails.apiKey;
-  }
+  public constructor(private http: AxiosInstance) {}
 
   /**
    * Lists all servers the client has access to.
    * @async @public @method list
-   * @returns {Promise<ListServersResponse>} The list of servers.
+   * @returns {Promise<PterodactylServer[]>} The list of servers.
    * @throws {APIValidationError} If the response is different than expected.
    * @throws {PterodactylError} If the request failed due to an error on the server.
    * @throws {Error} If the request failed.
+   * @example const servers = await client.servers.list();
    */
-  public async list() {
+  public async list(): Promise<PterodactylServer[]> {
     try {
-      const { data } = await axios.get(
-        getRequestURL({
-          hostURL: this.baseURL,
-          endpoint: ClientEndpoints.listServers,
-        }),
-        getRequestHeaders(this.apiKey),
+      const { data } = await this.http.get<ListServersResponse>(
+        ClientEndpoints.listServers,
       );
 
-      const validated = listServersResponseSchema.safeParse(data);
+      const validated = validateResponse(listServersResponseSchema, data);
 
-      if (!validated.success) throw new ValidationError();
-
-      return validated.data;
+      return validated.data.map((server) => ({
+        ...server.attributes,
+      }));
     } catch (err) {
       return handleError(err, 'Failed to list servers!');
     }
@@ -57,15 +50,13 @@ export default class ServerManager {
     action: 'start' | 'stop' | 'restart' | 'kill',
   ): Promise<void> {
     try {
-      return await axios.post(
-        getRequestURL({
-          hostURL: this.baseURL,
-          endpoint: ClientEndpoints.changePowerState,
-          serverID: serverID,
-        }),
-        { signal: action },
-        getRequestHeaders(this.apiKey),
-      );
+      const url = replaceVariables(ClientEndpoints.changePowerState, {
+        serverID,
+      });
+
+      console.log(url);
+
+      await this.http.post(url, { signal: action });
     } catch (err) {
       return handleError(err, `Failed to ${action} server ${serverID}!`);
     }

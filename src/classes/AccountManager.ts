@@ -1,12 +1,12 @@
 import type { AxiosInstance } from 'axios';
-import { ClientEndpoints } from '../../util/clientEndpoints';
-import { handleError } from '../../util/handleErrors';
-import { validateResponse } from '../../util/zodValidation';
+import { ClientEndpoints } from '../util/clientEndpoints';
+import { handleError } from '../util/handleErrors';
+import { validateResponse } from '../util/zodValidation';
 import {
   AccountDetails,
   AccountDetailsResponse,
   AccountDetailsResponseSchema,
-} from '../../validation/AccountSchema';
+} from '../validation/AccountSchema';
 
 /**
  * A class that manages the user account. As a user of this library, you don't need to instantiate this class yourself. It is already instantiated in the `PteroClient` class.\

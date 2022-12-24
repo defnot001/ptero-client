@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { client } from '../../test';
-import PteroClient from '../classes/PteroClient';
-import { PterodactylError, ValidationError } from '../classes/errors/Errors';
+import { PterodactylError, ValidationError } from '../classes/ErrorManager';
+import PteroClient from '../client';
 import { replaceVariables } from '../util/clientEndpoints';
+import { client } from './test';
 
 describe('testPteroClientConstructor', () => {
   it('should return an instance of PteroClient', () => {

@@ -1,4 +1,25 @@
-import { PterodactylError, ValidationError } from '../errors/Errors';
+import type { APIError } from '../types/interfaces';
+
+export class PterodactylError extends Error {
+  public override message: string;
+
+  public constructor(error: APIError) {
+    const { code, status, detail } = error;
+    super(detail);
+
+    this.message = `Status: ${status} (${code}): ${detail}`;
+  }
+}
+
+export class ValidationError extends Error {
+  public override message: string;
+
+  public constructor() {
+    super();
+    this.message =
+      'Recieved invalid data from the API! Please report this error to the developers!';
+  }
+}
 
 /**
  * Helper class to provide methods to check errors for specific types. As a user of this library, you don't need to instantiate this class yourself. It is already instantiated in the `PteroClient` class.\

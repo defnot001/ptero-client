@@ -1,11 +1,11 @@
 import type { AxiosInstance } from 'axios';
 import axios from 'axios';
-import type { AuthDetails } from '../types/interfaces';
-import AccountManager from './helpers/AccountManager';
-import BackupManager from './helpers/BackupManager';
-import ErrorManager from './helpers/ErrorManager';
-import FileManager from './helpers/FileManager';
-import ServerManager from './helpers/ServerManager';
+import AccountManager from './classes/AccountManager';
+import BackupManager from './classes/BackupManager';
+import ErrorManager from './classes/ErrorManager';
+import FileManager from './classes/FileManager';
+import ServerManager from './classes/ServerManager';
+import type { AuthDetails } from './types/interfaces';
 
 /**
  * The PteroClient class is the main class of the API wrapper.
