@@ -1,13 +1,14 @@
 {
   "include": ["src", "*.d.ts"],
-  "exclude": ["node_modules", "**/*.template.ts", "dist"],
+  "exclude": ["node_modules", "**/*.template.ts", "dist", "lib", "src/test"],
   "compilerOptions": {
     "lib": ["ESNext"],
     "strict": true,
     "module": "CommonJS",
     "moduleResolution": "node",
-    "target": "ESNext",
-    "outDir": "dist",
+    "target": "ES2018",
+    "declaration": true,
+    "outDir": "./lib",
     "sourceMap": false,
     "resolveJsonModule": true,
     "esModuleInterop": true,
