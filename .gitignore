@@ -1,5 +1,5 @@
 test.ts
 .DS_Store
 node_modules
-dist
 passkey.ts
+lib

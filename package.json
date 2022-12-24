@@ -3,6 +3,11 @@
   "version": "1.0.0",
   "description": "type-safe wrapper around the pterodactyl api",
   "author": "defnot001 <https://github.com/defnot001>",
+  "main": "lib/src/client.js",
+  "types": "lib/src/client.d.ts",
+  "files": [
+    "lib"
+  ],
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -23,22 +28,25 @@
     "pterodactyl-api",
     "ptero-client"
   ],
-  "main": "dist/src/index.js",
   "scripts": {
+    "clean": "rm -rf lib",
+    "prebuild": "npm run clean",
     "build": "tsc",
-    "dev": "ts-node src/test.ts",
+    "preversion": "npm run build",
+    "postversion": "git push --follow-tags",
+    "dev": "ts-node src/test/test.ts",
     "test": "vitest",
     "test:ui": "vitest --ui"
   },
   "dependencies": {
     "axios": "^1.2.1",
-    "tslib": "^2.4.1",
-    "typescript": "^4.9.3",
     "zod": "^3.20.2"
   },
   "devDependencies": {
     "@vitest/ui": "^0.25.8",
     "ts-node": "^10.9.1",
+    "tslib": "^2.4.1",
+    "typescript": "^4.9.4",
     "vitest": "^0.25.7"
   }
 }
