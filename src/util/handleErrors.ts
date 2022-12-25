@@ -1,6 +1,6 @@
 import axios, { AxiosError } from 'axios';
 import { PterodactylError, ValidationError } from '../classes/ErrorManager';
-import type { APIError } from '../types/interfaces';
+import type { APIError } from '../types/types';
 
 const getAPIErrors = (err: AxiosError): APIError[] | undefined => {
   if (

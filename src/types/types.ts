@@ -1,35 +1,35 @@
-export interface AuthDetails {
+export type AuthDetails = {
   baseURL: string;
   apiKey: string;
-}
+};
 
-export interface Headers {
+export type Headers = {
   headers: {
     Authorization: string;
     'Content-Type': string;
     Accept: string;
   };
-}
-export interface RequestURLOptions {
+};
+export type RequestURLOptions = {
   endpoint: string;
   serverID?: string;
   backupID?: string;
   directory?: string;
-}
+};
 
-export interface APIError {
+export type APIError = {
   code: string;
   status: string;
   detail: string;
-}
+};
 
-export interface BackupOptions {
+export type BackupOptions = {
   backupName?: string;
   locked?: boolean;
-}
+};
 
-export interface RenameOptions {
+export type RenameOptions = {
   from: string;
   to: string;
   directory?: string;
-}
+};

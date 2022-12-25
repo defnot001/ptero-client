@@ -1,5 +1,5 @@
 import axios, { type AxiosInstance } from 'axios';
-import type { AuthDetails } from '../types/interfaces';
+import type { AuthDetails } from '../types/types';
 import AccountManager from './AccountManager';
 import BackupManager from './BackupManager';
 import ErrorManager from './ErrorManager';

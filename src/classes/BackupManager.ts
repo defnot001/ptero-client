@@ -1,5 +1,5 @@
 import type { AxiosInstance } from 'axios';
-import type { BackupOptions } from '../types/interfaces';
+import type { BackupOptions } from '../types/types';
 import { ClientEndpoints, replaceVariables } from '../util/endpoints';
 import { handleError } from '../util/handleErrors';
 import { transformBackup, validateResponse } from '../util/helpers';

@@ -1,5 +1,5 @@
 import type { AxiosInstance } from 'axios';
-import type { RenameOptions } from '../types/interfaces';
+import type { RenameOptions } from '../types/types';
 import { ClientEndpoints, replaceVariables } from '../util/endpoints';
 import { handleError } from '../util/handleErrors';
 import { validateResponse } from '../util/helpers';

@@ -1,4 +1,4 @@
-import type { APIError } from '../types/interfaces';
+import type { APIError } from '../types/types';
 
 export class PterodactylError extends Error {
   public override message: string;
