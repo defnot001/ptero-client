@@ -1,7 +1,7 @@
 import type { AxiosInstance } from 'axios';
-import { ClientEndpoints, replaceVariables } from '../util/clientEndpoints';
+import { ClientEndpoints, replaceVariables } from '../util/endpoints';
 import { handleError } from '../util/handleErrors';
-import { validateResponse } from '../util/zodValidation';
+import { validateResponse } from '../util/helpers';
 import {
   ListServersResponse,
   PterodactylServer,
@@ -12,13 +12,13 @@ export default class ServerManager {
   public constructor(private http: AxiosInstance) {}
 
   /**
-   * Lists all servers the client has access to.
-   * @async @public @method list
-   * @returns {Promise<PterodactylServer[]>} The list of servers.
-   * @throws {APIValidationError} If the response is different than expected.
-   * @throws {PterodactylError} If the request failed due to an error on the server.
-   * @throws {Error} If the request failed.
-   * @example const servers = await client.servers.list();
+   * An `async` method that resolves to an array of PterodactlServers.
+   * The promise will reject if the request fails.
+   *
+   * Make sure to `await` the method call and handle potential **errors**.
+   * ```ts
+   * const servers = await client.servers.list();
+   * ```
    */
   public async list(): Promise<PterodactylServer[]> {
     try {
@@ -37,15 +37,11 @@ export default class ServerManager {
   }
 
   /**
-   * Requests a power state change.
-   * @async @private @method changePowerstate
-   * @param  {string} serverID The ID of the server.
-   * @param  {'start' | 'stop' | 'restart' | 'kill'} action The action to perform.
-   * @returns {Promise<void>}
-   * @throws {PterodactylError} If the request failed due to an API Error.
-   * @throws {Error} If the request failed.
+   * A private `async` method that changes the power state of a server.
+   * As this method is private, it is not exposed to the user if they are using TypeScript.
+   * For JavaScript users, this method is exposed but should **not** be used.
    */
-  private async changePowerstate(
+  private async _changePowerstate(
     serverID: string,
     action: 'start' | 'stop' | 'restart' | 'kill',
   ): Promise<void> {
@@ -54,8 +50,6 @@ export default class ServerManager {
         serverID,
       });
 
-      console.log(url);
-
       await this.http.post(url, { signal: action });
     } catch (err) {
       return handleError(err, `Failed to ${action} server ${serverID}!`);
@@ -63,50 +57,58 @@ export default class ServerManager {
   }
 
   /**
-   * Starts a server.
-   * @async @public @method start
-   * @param  {string} serverID The ID of the server.
-   * @returns {Promise<void>}
-   * @throws {PterodactylError} If the request failed due to an API Error.
-   * @throws {Error} If the request failed.
+   * An `async` method that starts a server.
+   * The promise will reject if the request fails.
+   * @param {string} serverID The ID of the server.
+   *
+   * Make sure to `await` the method call and handle potential **errors**.
+   * ```ts
+   * await client.servers.start('fe564c9a');
+   * ```
    */
   public async start(serverID: string) {
-    this.changePowerstate(serverID, 'start');
+    this._changePowerstate(serverID, 'start');
   }
 
   /**
-   * Stops a server.
-   * @async @public @method stop
-   * @param  {string} serverID The ID of the server.
-   * @returns {Promise<void>}
-   * @throws {PterodactylError} If the request failed due to an API Error.
-   * @throws {Error} If the request failed.
+   * An `async` method that stops a server.
+   * The promise will reject if the request fails.
+   * @param {string} serverID The ID of the server.
+   *
+   * Make sure to `await` the method call and handle potential **errors**.
+   * ```ts
+   * await client.servers.stop('fe564c9a');
+   * ```
    */
   public async stop(serverID: string) {
-    this.changePowerstate(serverID, 'stop');
+    this._changePowerstate(serverID, 'stop');
   }
 
   /**
-   * Restarts a server.
-   * @async @public @method restart
-   * @param  {string} serverID The ID of the server.
-   * @returns {Promise<void>}
-   * @throws {PterodactylError} If the request failed due to an API Error.
-   * @throws {Error} If the request failed.
+   * An `async` method that restarts a server.
+   * The promise will reject if the request fails.
+   * @param {string} serverID The ID of the server.
+   *
+   * Make sure to `await` the method call and handle potential **errors**.
+   * ```ts
+   * await client.servers.restart('fe564c9a');
+   * ```
    */
   public async restart(serverID: string) {
-    this.changePowerstate(serverID, 'restart');
+    this._changePowerstate(serverID, 'restart');
   }
 
   /**
-   * Kills a server.
-   * @async @public @method kill
-   * @param  {string} serverID The ID of the server.
-   * @returns {Promise<void>}
-   * @throws {PterodactylError} If the request failed due to an API Error.
-   * @throws {Error} If the request failed.
+   * An `async` method that kills a server.
+   * The promise will reject if the request fails.
+   * @param {string} serverID The ID of the server.
+   *
+   * Make sure to `await` the method call and handle potential **errors**.
+   * ```ts
+   * await client.servers.kill('fe564c9a');
+   * ```
    */
   public async kill(serverID: string) {
-    this.changePowerstate(serverID, 'kill');
+    this._changePowerstate(serverID, 'kill');
   }
 }

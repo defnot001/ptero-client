@@ -1,8 +1,8 @@
 import type { AxiosInstance } from 'axios';
 import type { RenameOptions } from '../types/interfaces';
-import { ClientEndpoints, replaceVariables } from '../util/clientEndpoints';
+import { ClientEndpoints, replaceVariables } from '../util/endpoints';
 import { handleError } from '../util/handleErrors';
-import { validateResponse } from '../util/zodValidation';
+import { validateResponse } from '../util/helpers';
 import {
   DownloadFileResponse,
   DownloadFileResponseSchema,
@@ -119,24 +119,6 @@ export default class FileManager {
     }
   }
 
-  // this method does not work yet
-  public async downloadFileBuffer(
-    serverID: string,
-    filePath: string,
-  ): Promise<Buffer> {
-    try {
-      const url = await this.getDownloadLink(serverID, filePath);
-
-      const { data } = await this.http.get(url, {
-        responseType: 'arraybuffer',
-      });
-
-      return Buffer.from(data, 'binary');
-    } catch (err) {
-      return handleError(err, `Failed to download file!`);
-    }
-  }
-
   /**
    * An `async` method that renames a file or directory on a server.
    * The promise will reject if the request fails.
@@ -172,17 +154,18 @@ export default class FileManager {
   }
 
   /**
-   * Duplicate a file or directory in the specified server.
-   * @async @public @method copy
+   * An `async` method that copies a file or directory on a server.
+   * The promise will reject if the request fails.
    * @param {string} serverID The ID of the server.
-   * @param {string} filePath The path of the file or directory to duplicate.
-   * @returns {Promise<void>} The response from the server.
-   * @throws {PterodactylError} If the request failed due to an error on the server.
-   * @throws {Error} If the request failed.
-   * @example await client.files.copy('fbb9784b', 'server.properties');
+   * @param {string} filePath The path of the file to copy.
+   *
+   * Make sure to `await` the method call and handle potential **errors**.
+   * ```ts
+   * await client.files.copy('fe564c9a', '/eula.txt');
+   * ```
    */
-  public async copy(serverID: string, filePath: string) {
-    if (!filePath.startsWith('/')) filePath = `/${filePath})`;
+  public async copy(serverID: string, filePath: string): Promise<void> {
+    if (!filePath.startsWith('/')) filePath = `/${filePath}`;
 
     const url = replaceVariables(ClientEndpoints.copyFile, { serverID });
 
@@ -196,17 +179,22 @@ export default class FileManager {
   }
 
   /**
-   * Writes content to a specified file.
-   * @async @public @method write
+   * An `async` method that writes content to a file on a server.
+   * The promise will reject if the request fails.
    * @param {string} serverID The ID of the server.
-   * @param {string} content The content to write.
-   * @param {string} [filePath='/'] The path of the file to write to. Defaults to the root directory.
-   * @returns {Promise<void>} The response from the server.
-   * @throws {PterodactylError} If the request failed due to an error on the server.
-   * @throws {Error} If the request failed.
-   * @example await client.files.write('fbb9784b', 'Hello World!', 'test.txt');
+   * @param {string} filePath The path of the file to write to.
+   * @param {string} content The content to write to the file.
+   *
+   * Make sure to `await` the method call and handle potential **errors**.
+   * ```ts
+   * await client.files.write('fe564c9a', 'Hello World!', '/eula.txt');
+   * ```
    */
-  public async write(serverID: string, content: string, filePath = '/') {
+  public async write(
+    serverID: string,
+    filePath: string,
+    content: string,
+  ): Promise<void> {
     if (!filePath.startsWith('/')) filePath = `/${filePath}`;
 
     const encoded = encodeURIComponent(filePath);
@@ -224,15 +212,16 @@ export default class FileManager {
   }
 
   /**
-   * Compresses a file or directory in the specified server.
-   * @async @public @method compress
+   * An `async` method that compresses a file or directory on a server and resolves an object containing information about the compressed file.
+   * The promise will reject if the request fails.
    * @param {string} serverID The ID of the server.
-   * @param {string} fileName The name of the file or directory to compress.
-   * @param {string} [directory='/'] The directory of the file or directory to compress. Defaults to the root directory.
-   * @returns {Promise<void>} The response from the server.
-   * @throws {PterodactylError} If the request failed due to an error on the server.
-   * @throws {Error} If the request failed.
-   * @example await client.files.compress('fbb9784b', '/mods');
+   * @param {string} fileName The name of the file to compress.
+   * @param {string} [directory='/'] The directory of the file to compress. Defaults to `/`.
+   *
+   * Make sure to `await` the method call and handle potential **errors**.
+   * ```ts
+   * const file: PterodactylFile = await client.files.compress('fe564c9a', '/mods');
+   * ```
    */
   public async compress(
     serverID: string,
@@ -263,15 +252,16 @@ export default class FileManager {
   }
 
   /**
-   * Decompresses a file or directory in the specified server. If the file already exists, it will NOT be overwritten.
-   * @async @public @method decompress
+   * An `async` method that decompresses a file or directory on a server.
+   * The promise will reject if the request fails.
    * @param {string} serverID The ID of the server.
-   * @param {string} fileName The name of the file or directory to decompress.
-   * @param {string} [directory='/'] The directory of the file or directory to decompress. Defaults to the root directory.
-   * @returns {Promise<void>} The response from the server.
-   * @throws {PterodactylError} If the request failed due to an error on the server.
-   * @throws {Error} If the request failed.
-   * @example await client.files.decompress('fbb9784b', 'test.tar.gz');
+   * @param {string} fileName The name of the file to decompress.
+   * @param {string} [directory='/'] The directory of the file to decompress. Defaults to `/`.
+   *
+   * Make sure to `await` the method call and handle potential **errors**.
+   * ```ts
+   * await client.files.decompress('fe564c9a', '/mods.tar.gz');
+   * ```
    */
   public async decompress(
     serverID: string,
@@ -298,15 +288,16 @@ export default class FileManager {
   }
 
   /**
-   * Deletes a file or directory in the specified server.
-   * @async @public @method delete
+   * An `async` method that deletes a file or directory on a server.
+   * The promise will reject if the request fails.
    * @param {string} serverID The ID of the server.
-   * @param {string[]} fileNames The names of the files or directories to delete.
-   * @param {string} [directory='/'] The directory of the files to delete. Defaults to the root directory.
-   * @returns {Promise<void>} The response from the server.
-   * @throws {PterodactylError} If the request failed due to an error on the server.
-   * @throws {Error} If the request failed.
-   * @example await client.files.delete('fbb9784b', ['test.txt', 'test2.txt']);
+   * @param {string[]} fileNames The names of the files to delete.
+   * @param {string} [directory='/'] The directory of the files to delete. Defaults to `/`.
+   *
+   * Make sure to `await` the method call and handle potential **errors**.
+   * ```ts
+   * await client.files.delete('fe564c9a', ['eula.txt', 'mods.tar.gz']);
+   * ```
    */
   public async delete(
     serverID: string,
@@ -333,15 +324,16 @@ export default class FileManager {
   }
 
   /**
-   * Creates a directory in the specified server.
-   * @async @public @method createDirectory
+   * An `async` method that creates a directory on a server.
+   * The promise will reject if the request fails.
    * @param {string} serverID The ID of the server.
    * @param {string} directoryName The name of the directory to create.
-   * @param {string} [directory='/'] The directory to create the directory in. Defaults to the root directory.
-   * @returns {Promise<void>} The response from the server.
-   * @throws {PterodactylError} If the request failed due to an error on the server.
-   * @throws {Error} If the request failed.
-   * @example await client.files.createDirectory('fbb9784b', 'testFolder');
+   * @param {string} [directory='/'] The directory to create the directory in. Defaults to `/`.
+   *
+   * Make sure to `await` the method call and handle potential **errors**.
+   * ```ts
+   * await client.files.createDirectory('fe564c9a', 'testDirectory', '/world');
+   * ```
    */
   public async createDirectory(
     serverID: string,

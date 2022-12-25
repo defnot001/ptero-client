@@ -1,10 +1,9 @@
 import type { AxiosInstance } from 'axios';
 import type { BackupOptions } from '../types/interfaces';
-import { ClientEndpoints, replaceVariables } from '../util/clientEndpoints';
+import { ClientEndpoints, replaceVariables } from '../util/endpoints';
 import { handleError } from '../util/handleErrors';
-import { validateResponse } from '../util/zodValidation';
+import { transformBackup, validateResponse } from '../util/helpers';
 import {
-  BackupAttributes,
   BackupDownloadResponse,
   BackupDownloadSchema,
   BackupListResponse,
@@ -22,19 +21,6 @@ import {
  */
 export default class BackupManager {
   public constructor(private http: AxiosInstance) {}
-
-  /**
-   * A private method that transforms the backup attributes to a more readable format.
-   * @param backup The backup attributes.
-   * @returns {PterodactylBackup} The transformed backup object with the type `PterodactylBackup`.
-   */
-  private transformBackup(backup: BackupAttributes): PterodactylBackup {
-    return {
-      ...backup,
-      created_at: new Date(backup.created_at),
-      completed_at: backup.completed_at ? new Date(backup.completed_at) : null,
-    };
-  }
 
   /**
    * An `async` method that resolves to a list of all backups on a pterodactyl server. Additionally it returns the backup meta.
@@ -60,7 +46,7 @@ export default class BackupManager {
       const validated = validateResponse(BackupListResponseSchema, data);
 
       const backupList: PterodactylBackup[] = validated.data.map((backup) =>
-        this.transformBackup(backup.attributes),
+        transformBackup(backup.attributes),
       );
 
       return { data: backupList, meta: validated.meta };
@@ -102,7 +88,7 @@ export default class BackupManager {
 
       const { attributes } = validateResponse(BackupResponseSchema, data);
 
-      return this.transformBackup(attributes);
+      return transformBackup(attributes);
     } catch (err) {
       return handleError(err, `Failed to create backup of server ${serverID}!`);
     }
@@ -132,7 +118,7 @@ export default class BackupManager {
       const { data } = await this.http.get<BackupResponse>(url);
       const { attributes } = validateResponse(BackupResponseSchema, data);
 
-      return this.transformBackup(attributes);
+      return transformBackup(attributes);
     } catch (err) {
       return handleError(
         err,

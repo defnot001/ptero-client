@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { PterodactylError, ValidationError } from '../classes/ErrorManager';
 import PteroClient from '../client';
-import { replaceVariables } from '../util/clientEndpoints';
+import { replaceVariables } from '../util/endpoints';
 import { client } from './test';
 
 describe('testPteroClientConstructor', () => {

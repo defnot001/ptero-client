@@ -1,7 +1,7 @@
 import type { AxiosInstance } from 'axios';
-import { ClientEndpoints } from '../util/clientEndpoints';
+import { ClientEndpoints } from '../util/endpoints';
 import { handleError } from '../util/handleErrors';
-import { validateResponse } from '../util/zodValidation';
+import { validateResponse } from '../util/helpers';
 import {
   AccountDetails,
   AccountDetailsResponse,
