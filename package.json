@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "type-safe wrapper around the pterodactyl api",
   "author": "defnot001 <https://github.com/defnot001>",
-  "main": "lib/src/client.js",
-  "types": "lib/src/client.d.ts",
+  "main": "lib/src/index.js",
+  "types": "lib/src/index.d.ts",
   "files": [
     "lib"
   ],
