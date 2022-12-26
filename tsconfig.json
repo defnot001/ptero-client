@@ -34,7 +34,7 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedIndexedAccess": true,
-    "removeComments": true,
+    "removeComments": false,
     "noPropertyAccessFromIndexSignature": true,
     "incremental": true,
     "noImplicitOverride": true,
