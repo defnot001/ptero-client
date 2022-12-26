@@ -8,8 +8,15 @@ import ServerManager from './ServerManager';
 
 /**
  * The PteroClient class is the main class of the API wrapper.
- * @public @class PteroClients
+ * It is the only class that is exported by default.
+ * ```ts
+ * import PteroClient from ts-ptero-wrapper;
+ *
+ * const client = new PteroClient({
+ *  baseURL: 'https://example.com',
+ *  apiKey: 'your-api-key',
  * });
+ * ```
  */
 export default class PteroClient {
   /**
@@ -49,7 +56,7 @@ export default class PteroClient {
    */
   private _http: AxiosInstance;
 
-  public constructor(private authDetails: AuthDetails) {
+  public constructor(public authDetails: AuthDetails) {
     this.authDetails = authDetails;
 
     if (!this.authDetails.baseURL.trim() || !this.authDetails.apiKey.trim()) {
