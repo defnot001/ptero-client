@@ -18,7 +18,7 @@ import ServerManager from './ServerManager';
  * });
  * ```
  */
-export default class PteroClient {
+export class PteroClient {
   /**
    * The `FileManager` class, used to manage files on the server.
    * Can be accessed using `client.files`.

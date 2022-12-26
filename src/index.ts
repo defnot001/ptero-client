@@ -1,4 +1,4 @@
-import PteroClient from './classes/client';
+import { PteroClient } from './classes/client';
 
 export default PteroClient;
 
