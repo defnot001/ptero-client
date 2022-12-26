@@ -18,7 +18,7 @@ import ServerManager from './ServerManager';
  * });
  * ```
  */
-export class PteroClient {
+export default class PteroClient {
   public authDetails: AuthDetails;
 
   /**
