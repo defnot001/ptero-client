@@ -19,6 +19,8 @@ import ServerManager from './ServerManager';
  * ```
  */
 export class PteroClient {
+  public authDetails: AuthDetails;
+
   /**
    * The `FileManager` class, used to manage files on the server.
    * Can be accessed using `client.files`.
@@ -56,7 +58,7 @@ export class PteroClient {
    */
   private _http: AxiosInstance;
 
-  public constructor(public authDetails: AuthDetails) {
+  public constructor(authDetails: AuthDetails) {
     this.authDetails = authDetails;
 
     if (!this.authDetails.baseURL.trim() || !this.authDetails.apiKey.trim()) {
