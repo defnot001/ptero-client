@@ -5,7 +5,7 @@
     "lib": ["ESNext"],
     "strict": true,
     "module": "CommonJS",
-    "moduleResolution": "node",
+    "moduleResolution": "Node",
     "target": "ES2018",
     "declaration": true,
     "outDir": "./lib",

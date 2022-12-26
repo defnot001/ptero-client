@@ -18,7 +18,7 @@ import type { AuthDetails } from './types/types';
  * });
  * ```
  */
-export default class PteroClient {
+export class PteroClient {
   public authDetails: AuthDetails;
 
   /**
