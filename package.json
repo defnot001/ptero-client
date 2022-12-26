@@ -1,6 +1,6 @@
 {
   "name": "ts-ptero-wrapper",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "type-safe wrapper around the pterodactyl api",
   "author": "defnot001 <https://github.com/defnot001>",
   "main": "lib/index.js",
