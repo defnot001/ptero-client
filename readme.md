@@ -1,6 +1,6 @@
 # Pterodactyl API Client
 
-Ptero-client is wrapper around the official [API](https://dashflo.net/docs/api/pterodactyl/v1/) for the [Pterodactyl](https://pterodactyl.io/) panel using [axios](https://github.com/axios/axios). It is designed for ease of use and type safety. All the responses are strongly typed using [Typescript](https://www.typescriptlang.org/).
+Ptero-client is wrapper around the official [API](https://dashflo.net/docs/api/pterodactyl/v1/) for the [Pterodactyl](https://pterodactyl.io/) panel using [axios](https://github.com/axios/axios). It is designed for ease of use and type safety. All the responses are strongly typed using [Typescript](https://www.typescriptlang.org/). The library also includes the option to import useful types for the user to work with.
 
 This project will be published as a npm-package once all client endpoints are covered.
 
@@ -11,17 +11,17 @@ This project will be published as a npm-package once all client endpoints are co
 To get started, install the package:
 
 ```bash
-npm install ptero-client
+npm install ts-ptero-wrapper
 ```
 
 Then you will need to import the Class and instanciate it with the URL of your panel and your client API key:
 
 ```ts
-import PteroClient from 'ptero-client';
+import PteroClient from 'ts-ptero-wrapper';
 
 const client = new PteroClient({
   hostURL: 'https://panel.example.com/',
-  apiKey: '', // your api key
+  apiKey: 'your-api-key',
 });
 ```
 
