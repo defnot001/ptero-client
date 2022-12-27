@@ -11,12 +11,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/defnot001/ptero-client+.git"
+    "url": "git+https://github.com/defnot001/ptero-client.git"
   },
   "bugs": {
-    "url": "https://github.com/defnot001/ptero-client+/issues"
+    "url": "https://github.com/defnot001/ptero-client/issues"
   },
-  "homepage": "https://github.com/defnot001/ptero-client+#readme",
+  "homepage": "https://github.com/defnot001/ptero-client#readme",
   "keywords": [
     "api",
     "nodejs",
