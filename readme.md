@@ -11,13 +11,13 @@ This project will be published as a npm-package once all client endpoints are co
 To get started, install the package:
 
 ```bash
-npm install ts-ptero-wrapper
+npm install ptero-client
 ```
 
 Then you will need to import the Class and instanciate it with the URL of your panel and your client API key:
 
 ```ts
-import PteroClient from 'ts-ptero-wrapper';
+import { PteroClient } from 'ptero-client';
 
 const client = new PteroClient({
   hostURL: 'https://panel.example.com/',
