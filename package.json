@@ -1,6 +1,6 @@
 {
   "name": "ptero-client",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "type-safe wrapper around the pterodactyl api",
   "author": "defnot001 <https://github.com/defnot001>",
   "main": "lib/index.js",
