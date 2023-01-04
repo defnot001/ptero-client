@@ -74,5 +74,28 @@ export const listServersResponseSchema = z.object({
   data: z.array(PterodactylServerSchema),
 });
 
+export const serverUsageSchema = z.object({
+  object: z.literal('stats'),
+  attributes: z.object({
+    current_state: z
+      .literal('running')
+      .or(z.literal('offline'))
+      .or(z.literal('starting'))
+      .or(z.literal('stopping')),
+    is_suspended: z.boolean(),
+    resources: z.object({
+      memory_bytes: z.number(),
+      cpu_absolute: z.number(),
+      disk_bytes: z.number(),
+      network_rx_bytes: z.number(),
+      network_tx_bytes: z.number(),
+      uptime: z.number(),
+    }),
+  }),
+});
+
 export type PterodactylServer = z.infer<typeof PterodactylServerAttributes>;
 export type ListServersResponse = z.infer<typeof listServersResponseSchema>;
+export type ServerUsageResponse = z.infer<typeof serverUsageSchema>;
+
+export type ServerUsage = z.infer<typeof serverUsageSchema>['attributes'];

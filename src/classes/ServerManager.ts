@@ -5,7 +5,10 @@ import { validateResponse } from '../util/helpers';
 import {
   ListServersResponse,
   PterodactylServer,
+  ServerUsage,
+  ServerUsageResponse,
   listServersResponseSchema,
+  serverUsageSchema,
 } from '../validation/ServerSchema';
 
 export default class ServerManager {
@@ -33,6 +36,25 @@ export default class ServerManager {
       }));
     } catch (err) {
       return handleError(err, 'Failed to list servers!');
+    }
+  }
+
+  public async getResourceUsage(serverID: string): Promise<ServerUsage> {
+    const url = replaceVariables(ClientEndpoints.resourceUsage, {
+      serverID,
+    });
+
+    try {
+      const { data } = await this.http.get<ServerUsageResponse>(url);
+
+      const validated = validateResponse(serverUsageSchema, data);
+
+      return validated.attributes;
+    } catch (err) {
+      return handleError(
+        err,
+        `Failed to get resource usage for server ${serverID}!`,
+      );
     }
   }
 
