@@ -18,6 +18,7 @@ export const ClientEndpoints = {
   downloadBackup: '/api/client/servers/:server_id/backups/:backup_id/download',
   deleteBackup: '/api/client/servers/:server_id/backups/:backup_id',
   resourceUsage: '/api/client/servers/:server_id/resources',
+  consoleDetails: '/api/client/servers/:server_id/websocket',
 } as const;
 
 type TClientEndpoints = typeof ClientEndpoints[keyof typeof ClientEndpoints];
