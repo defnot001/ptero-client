@@ -1,3 +1,5 @@
+import type { CloseEvent, ErrorEvent } from 'ws';
+
 export type AuthDetails = {
   baseURL: string;
   apiKey: string;
@@ -48,27 +50,35 @@ export type PteroStats = {
   disk_bytes: number;
 };
 
-export type PteroWebsocketListeners = Readonly<{
-  onOpen?: () => void;
-  onAuthSuccess?: () => void;
-  onStatus?: (status: PteroServerState) => void;
-  onConsoleOutput?: (output: string) => void;
-  onStats?: (stats: PteroStats) => void;
-  onTokenExpiring?: () => void;
-  onTokenExpired?: () => void;
-  onClose?: (code: number, reason: Buffer) => void;
-  onError?: (error: Error) => void;
-}>;
+export type PteroWebsocketListeners = {
+  open: () => void;
+  'auth success': () => void;
+  status: (status: PteroServerState) => void;
+  'console output': (output: string) => void;
+  stats: (stats: PteroStats) => void;
+  'token expiring': () => void;
+  'token expired': () => void;
+  close?: (code: CloseEvent) => void;
+  error?: (error: ErrorEvent) => void;
+};
 
 export type WebsocketResponse = {
-  event: TPteroEvent;
+  event: PteroEvent;
   args?: string[];
 };
 
-export type TPteroEvent =
+export type PteroEvent =
   | 'auth success'
   | 'status'
   | 'console output'
   | 'stats'
   | 'token expiring'
   | 'token expired';
+
+export type PowerAction = 'start' | 'stop' | 'restart' | 'kill';
+
+export type SendObjectOptions = {
+  objectType: 'command' | 'state' | 'logs' | 'stats';
+  command?: string;
+  action?: PowerAction;
+};
