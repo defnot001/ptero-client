@@ -2,4 +2,4 @@ test.ts
 .DS_Store
 node_modules
 passkey.ts
-lib
+dist
