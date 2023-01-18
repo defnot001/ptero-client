@@ -4,7 +4,7 @@ import BackupManager from './classes/BackupManager';
 import ErrorManager from './classes/ErrorManager';
 import FileManager from './classes/FileManager';
 import ServerManager from './classes/ServerManager';
-import WebsocketManager from './classes/WebSocketManager';
+import WebsocketManager from './classes/WebsocketManager';
 import type { AuthDetails } from './types/types';
 
 /**
@@ -45,10 +45,6 @@ export class PteroClient {
    * Can be accessed using `client.account`.
    */
   public account: AccountManager;
-  /**
-   * The `WebsocketManager` class, used to manage the websocket connection.
-   * Can be accessed using `client.socket`.
-   */
   public socket: WebsocketManager;
 
   /**
@@ -84,8 +80,8 @@ export class PteroClient {
     this.backups = new BackupManager(this._http);
     this.servers = new ServerManager(this._http);
     this.account = new AccountManager(this._http);
-    this.socket = new WebsocketManager(this._http);
     this.errors = new ErrorManager();
+    this.socket = new WebsocketManager(this._http);
   }
 }
 

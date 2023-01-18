@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
+import { PteroClient } from '..';
 import { PterodactylError, ValidationError } from '../classes/ErrorManager';
-import PteroClient from '../client';
 import { replaceVariables } from '../util/endpoints';
 import { client } from './test';
 
