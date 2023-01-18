@@ -17,7 +17,7 @@ export class ValidationError extends Error {
   public constructor() {
     super();
     this.message =
-      'Recieved invalid data from the API! Please report this error to the developers!';
+      'Received invalid data from the API! Please report this error to the developers!';
   }
 }
 
