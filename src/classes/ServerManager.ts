@@ -134,6 +134,17 @@ export default class ServerManager {
     this._changePowerstate(serverID, 'kill');
   }
 
+  /**
+   * An `async` method that sends a command to a server.
+   * The promise will reject if the request fails.
+   * @param {string} serverID The ID of the server.
+   * @param {string} command The command to send to the server.
+   *
+   * Make sure to `await` the method call and handle potential **errors**.
+   * ```ts
+   * await client.servers.sendCommand('fe564c9a', 'say Hello World!');
+   * ```
+   */
   public async sendCommand(serverID: string, command: string) {
     const url = replaceVariables(ClientEndpoints.sendCommand, {
       serverID,
