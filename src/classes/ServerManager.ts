@@ -133,4 +133,20 @@ export default class ServerManager {
   public async kill(serverID: string) {
     this._changePowerstate(serverID, 'kill');
   }
+
+  public async sendCommand(serverID: string, command: string) {
+    const url = replaceVariables(ClientEndpoints.sendCommand, {
+      serverID,
+    });
+
+    try {
+      const { data } = await this.http.post<string | undefined>(url, {
+        command,
+      });
+
+      return data;
+    } catch (err) {
+      return handleError(err, `Failed to send command to server ${serverID}!`);
+    }
+  }
 }
