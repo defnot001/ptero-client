@@ -6,9 +6,10 @@
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
+  "exports": {
+    "import": "./dist/index.mjs",
+    "require": "./dist/index.js"
+  },
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -31,9 +32,9 @@
   ],
   "scripts": {
     "clean": "rm -rf lib",
-    "prebuild": "npm run clean",
-    "build": "tsup src/index.ts --format cjs,esm --dts --minify",
-    "preversion": "npm run build",
+    "prebuild": "yarn clean",
+    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "preversion": "yarn build",
     "postversion": "git push --follow-tags",
     "dev": "ts-node src/test/test.ts",
     "test": "vitest",
@@ -46,6 +47,7 @@
     "zod": "^3.20.2"
   },
   "devDependencies": {
+    "@types/node": "^18.11.18",
     "@types/ws": "^8.5.4",
     "@vitest/ui": "^0.25.8",
     "ts-node": "^10.9.1",
