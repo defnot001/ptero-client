@@ -4,14 +4,13 @@ import { ClientEndpoints, replaceVariables } from '../util/endpoints';
 import { handleError } from '../util/handleErrors';
 import { validateResponse } from '../util/helpers';
 import {
-  DownloadFileResponse,
-  DownloadFileResponseSchema,
+  FileURLResponse,
+  FileURLResponseSchema,
   ListFilesResponse,
   ListFilesResponseSchema,
   PterodactylFile,
   PterodactylFileSchema,
 } from '../validation/FileSchema';
-import { ValidationError } from './ErrorManager';
 
 /**
  * A class that manages files on a pterodactyl server. As a user of this library, you don't need to instantiate this class yourself. It is already instantiated in the `PteroClient` class.\
@@ -109,9 +108,9 @@ export default class FileManager {
       replaceVariables(ClientEndpoints.downloadFile, { serverID }) + encoded;
 
     try {
-      const { data } = await this.http.get<DownloadFileResponse>(url);
+      const { data } = await this.http.get<FileURLResponse>(url);
 
-      const validated = validateResponse(DownloadFileResponseSchema, data);
+      const validated = validateResponse(FileURLResponseSchema, data);
 
       return validated.attributes.url;
     } catch (err) {
@@ -183,7 +182,7 @@ export default class FileManager {
    * The promise will reject if the request fails.
    * @param {string} serverID The ID of the server.
    * @param {string} filePath The path of the file to write to.
-   * @param {string} content The content to write to the file.
+   * @param {any} content The content to write to the file.
    *
    * Make sure to `await` the method call and handle potential **errors**.
    * ```ts
@@ -193,7 +192,7 @@ export default class FileManager {
   public async write(
     serverID: string,
     filePath: string,
-    content: string,
+    content: any,
   ): Promise<void> {
     if (!filePath.startsWith('/')) filePath = `/${filePath}`;
 
@@ -203,7 +202,11 @@ export default class FileManager {
       replaceVariables(ClientEndpoints.writeFile, { serverID }) + encoded;
 
     try {
-      await this.http.post(url, content);
+      await this.http.post(url, content, {
+        headers: {
+          'Content-Type': 'text/plain',
+        },
+      });
 
       return;
     } catch (err) {
@@ -241,9 +244,7 @@ export default class FileManager {
     try {
       const { data } = await this.http.post(url, obj);
 
-      const validated = PterodactylFileSchema.safeParse(data);
-
-      if (!validated.success) throw new ValidationError();
+      const validated = validateResponse(PterodactylFileSchema, data);
 
       return validated.data.attributes;
     } catch (err) {

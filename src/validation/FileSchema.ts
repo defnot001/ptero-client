@@ -22,7 +22,7 @@ export const ListFilesResponseSchema = z.object({
   data: z.array(PterodactylFileSchema),
 });
 
-export const DownloadFileResponseSchema = z.object({
+export const FileURLResponseSchema = z.object({
   object: z.literal('signed_url'),
   attributes: z.object({
     url: z.string().url(),
@@ -31,4 +31,4 @@ export const DownloadFileResponseSchema = z.object({
 
 export type ListFilesResponse = z.infer<typeof ListFilesResponseSchema>;
 export type PterodactylFile = z.infer<typeof PterodactylFileAttributesSchema>;
-export type DownloadFileResponse = z.infer<typeof DownloadFileResponseSchema>;
+export type FileURLResponse = z.infer<typeof FileURLResponseSchema>;
