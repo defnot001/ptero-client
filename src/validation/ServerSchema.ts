@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 const limits = z.object({
   memory: z.number(),
@@ -23,10 +23,10 @@ const featureLimits = z.object({
 
 const relationships = z.object({
   allocations: z.object({
-    object: z.literal('list'),
+    object: z.literal("list"),
     data: z.array(
       z.object({
-        object: z.literal('allocation'),
+        object: z.literal("allocation"),
         attributes: z.object({
           id: z.number(),
           ip: z.string(),
@@ -35,7 +35,7 @@ const relationships = z.object({
           notes: z.string().nullable(),
           is_default: z.boolean(),
         }),
-      }),
+      })
     ),
   }),
   variables: z.object({
@@ -65,23 +65,23 @@ const PterodactylServerAttributes = z.object({
 });
 
 export const PterodactylServerSchema = z.object({
-  object: z.literal('server'),
+  object: z.literal("server"),
   attributes: PterodactylServerAttributes,
 });
 
 export const listServersResponseSchema = z.object({
-  object: z.literal('list'),
+  object: z.literal("list"),
   data: z.array(PterodactylServerSchema),
 });
 
 export const serverUsageSchema = z.object({
-  object: z.literal('stats'),
+  object: z.literal("stats"),
   attributes: z.object({
     current_state: z
-      .literal('running')
-      .or(z.literal('offline'))
-      .or(z.literal('starting'))
-      .or(z.literal('stopping')),
+      .literal("running")
+      .or(z.literal("offline"))
+      .or(z.literal("starting"))
+      .or(z.literal("stopping")),
     is_suspended: z.boolean(),
     resources: z.object({
       memory_bytes: z.number(),
@@ -98,4 +98,4 @@ export type PterodactylServer = z.infer<typeof PterodactylServerAttributes>;
 export type ListServersResponse = z.infer<typeof listServersResponseSchema>;
 export type ServerUsageResponse = z.infer<typeof serverUsageSchema>;
 
-export type ServerUsage = z.infer<typeof serverUsageSchema>['attributes'];
+export type ServerUsage = z.infer<typeof serverUsageSchema>["attributes"];
