@@ -3,3 +3,4 @@ test.ts
 node_modules
 passkey.ts
 dist
+pnpm-lock.yaml
