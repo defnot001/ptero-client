@@ -1,17 +1,19 @@
-import type { CloseEvent, ErrorEvent } from 'ws';
+import type { CloseEvent, ErrorEvent } from "ws";
 
 export type AuthDetails = {
   baseURL: string;
-  apiKey: string;
+  clientKey: string;
+  applicationKey: string;
 };
 
 export type Headers = {
   headers: {
     Authorization: string;
-    'Content-Type': string;
+    "Content-Type": string;
     Accept: string;
   };
 };
+
 export type RequestURLOptions = {
   endpoint: string;
   serverID?: string;
@@ -36,7 +38,7 @@ export type RenameOptions = {
   directory?: string;
 };
 
-export type PteroServerState = 'starting' | 'running' | 'stopping' | 'offline';
+export type PteroServerState = "starting" | "running" | "stopping" | "offline";
 
 export type PteroStats = {
   memory_bytes: number;
@@ -52,12 +54,12 @@ export type PteroStats = {
 
 export type PteroWebsocketListeners = {
   open: () => void;
-  'auth success': () => void;
+  "auth success": () => void;
   status: (status: PteroServerState) => void;
-  'console output': (output: string) => void;
+  "console output": (output: string) => void;
   stats: (stats: PteroStats) => void;
-  'token expiring': () => void;
-  'token expired': () => void;
+  "token expiring": () => void;
+  "token expired": () => void;
   close?: (code: CloseEvent) => void;
   error?: (error: ErrorEvent) => void;
 };
@@ -68,17 +70,17 @@ export type WebsocketResponse = {
 };
 
 export type PteroEvent =
-  | 'auth success'
-  | 'status'
-  | 'console output'
-  | 'stats'
-  | 'token expiring'
-  | 'token expired';
+  | "auth success"
+  | "status"
+  | "console output"
+  | "stats"
+  | "token expiring"
+  | "token expired";
 
-export type PowerAction = 'start' | 'stop' | 'restart' | 'kill';
+export type PowerAction = "start" | "stop" | "restart" | "kill";
 
 export type SendObjectOptions = {
-  objectType: 'command' | 'state' | 'logs' | 'stats';
+  objectType: "command" | "state" | "logs" | "stats";
   command?: string;
   action?: PowerAction;
 };

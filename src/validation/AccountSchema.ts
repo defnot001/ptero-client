@@ -1,9 +1,10 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 export const AccountDetailsResponseSchema = z.object({
-  object: z.literal('user'),
+  object: z.literal("user"),
   attributes: z.object({
     id: z.number(),
+    uuid: z.string(),
     admin: z.boolean(),
     username: z.string(),
     email: z.string(),
@@ -17,4 +18,4 @@ export type AccountDetailsResponse = z.infer<
   typeof AccountDetailsResponseSchema
 >;
 
-export type AccountDetails = AccountDetailsResponse['attributes'];
+export type AccountDetails = AccountDetailsResponse["attributes"];
