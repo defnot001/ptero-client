@@ -6,7 +6,7 @@ const limits = z.object({
   disk: z.number(),
   io: z.number(),
   cpu: z.number(),
-  threads: z.string(),
+  threads: z.number().nullable(),
   oom_disabled: z.boolean(),
 });
 
